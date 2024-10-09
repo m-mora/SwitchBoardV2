@@ -11,6 +11,7 @@
 #ifndef DISPLAY_ADDR
   #define DISPLAY_ADDR 0x3C // Mosto common address used for Oled displays
 #endif
+
 class Display : public Adafruit_SSD1306
 {
 public:
