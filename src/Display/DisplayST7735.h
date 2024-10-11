@@ -43,7 +43,31 @@ public:
   uint16_t height();
   void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
   void display();
+  void setTextColor(uint16_t color);
+  void setTextSize(uint8_t size);
+  void print(String s);
+  void print(int i);
 };
+
+void ST7735Display::print(String s)
+{
+  device.print(s);
+}
+
+void ST7735Display::print(int i)
+{
+  device.print(i);
+}
+
+void ST7735Display::setTextSize(uint8_t size)
+{
+  device.setTextSize(size);
+}
+
+void ST7735Display::setTextColor(uint16_t color)
+{
+  device.setTextColor(color);
+}
 
 void ST7735Display::display()
 {
@@ -78,10 +102,11 @@ void ST7735Display::clearScreen(void)
 void ST7735Display::showLogo()
 {
   device.fillScreen(ST7735_BLACK);
-  device.drawBitmap(0, 0, bitmap_klic_logo, 128, 64, WHITE);
+  device.drawBitmap(0, 0, bitmap_klic_logo, 128, 64, ST7735_BLUE);
 }
 
 void ST7735Display::init(uint8_t dummy)
 {
-  device.initR(ST7735_BLACK);
+  device.initR(INITR_BLACKTAB);
+  device.fillScreen(ST7735_BLACK);
 }

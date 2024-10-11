@@ -43,7 +43,37 @@ public:
   uint16_t height();
   void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
   void display();
+  void setTextColor(uint16_t color);
+  void setTextSize(uint8_t size);
+  void print(String s);
+  void print(int i);
+
 };
+
+void SSD1306Display::print(String s)
+{
+  device.print(s);
+}
+
+void SSD1306Display::print(int i )
+{
+  device.print(i);
+}
+
+void SSD1306Display::setTextSize(uint8_t size)
+{
+  device.setTextSize(size);
+}
+
+void SSD1306Display::setTextColor(uint16_t color)
+{
+  if (color != SSD1306_BLACK )
+  {
+    color = SSD1306_WHITE;
+  }
+  device.setTextColor(color);
+}
+
 
 void SSD1306Display::display()
 {
@@ -52,6 +82,11 @@ void SSD1306Display::display()
 
 void SSD1306Display::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
 {
+  /* this is a monochrome display */
+  if (color != SSD1306_BLACK )
+  {
+    color = SSD1306_WHITE;
+  }
   device.drawLine(x0,y0,x1,y1,color);
 }
 
