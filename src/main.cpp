@@ -14,14 +14,27 @@
 
 Display display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+#define BOARD_LED           2
+
 void setup()
 {
-    Serial.begin(115200);
+    Serial.begin(115200); 
+    pinMode(2, OUTPUT);
 }
 
 void loop()
 {
- 
+   // 
+  digitalWrite(BOARD_LED, HIGH);
+  
+  // Keep the LED on for 5 seconds
+  delay(1000);
+  
+  // Turn off the LED
+  digitalWrite(BOARD_LED, LOW);
+
+  delay(1000);
+
 }
 
 #endif

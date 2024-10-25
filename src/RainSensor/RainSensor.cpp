@@ -2,8 +2,8 @@
  * Project: Klic Smart Irrigation System
  * 
  * Description:
- *    [Briefly describe what this file does, e.g., "Handles input/output 
- *    operations for user interaction in the application."]
+ *    Module to read rain sensors potentiometer based (analog and digital inputs) 
+ *    
  * 
  * License:
  *    This project is open for use, modification, and distribution for personal
@@ -18,6 +18,10 @@
  *    
  ******************************************************************************/
 
+#include <Arduino.h>
+
+using namespace std;
+
 typedef enum MOISTURE_STATES {
   dry = 0,
   wet,
@@ -28,12 +32,44 @@ typedef enum MOISTURE_STATES {
 // To be a class...
 //
 typedef struct {
-
   unsigned char DigitalSensorPin;
   unsigned char AnalogSensorPin;
-  
-
 } RAIN_SENSOR_PARAM;
+
+
+class RainSensor {
+  public:
+    RainSensor (uint8_t  DigitalInPin, uint8_t AnalogInPin) : DigitalInPin (DigitalInPin),  AnalogInPin (AnalogInPin) {
+
+    }
+
+  uint16_t MoisturePct (void);
+
+  private:
+
+    const uint8_t  DigitalInPin;
+    const uint8_t  AnalogInPin;
+
+    void InitAdc (void);
+    uint16_t ReadRainSensor (void);
+};
+
+
+void RainSensor::InitAdc (void) {
+
+  
+  pinMode(AnalogInPin, INPUT);
+
+  //
+  // 10 bits ADC counter 0 <= counts < 1023
+  //
+  analogReadResolution(10);
+  
+  //
+  // Max Input voltage
+  //
+  analogSetAttenuation(ADC_11db);
+}
 
 /*
 Rain Sensor digital output has to be calibrated
@@ -63,36 +99,26 @@ void ExitCalibratioMode (
 }
 
 /*
-Rain Sensor digital output has to be calibrated
-TBD Define procedure with team to calibrate sensor
 
-A rain drop sensor is basically a board on which
-When there is no rain drop on board. Resistance is high so we get high voltage according to V=IR.
 When rain drop present it reduces the resistance because water is a conductor of electricity and
 the presence of water connects nickel lines in parallel so reduced resistance and the reduced voltage
 drop across it.
 
 */
-void ReadRainSensor (
+uint16_t RainSensor::ReadRainSensor (
   void
   )
 {
-  return ;
+  return analogRead (AnalogInPin);
 }
 
 
-/*
-Rain Sensor digital output has to be calibrated
-TBD Define procedure with team to calibrate sensor
-
-*/
-void ReadMoisture (
-  void
-  )
-{
-  return ;
+uint16_t RainSensor::MoisturePct (void) {
+  //
+  // Adc resolution to be adjustable
+  //
+  return (ReadRainSensor () * 100 )/ ((1 << 10) - 1)
 }
-
 
 void DetermineMoistureLevels (
   void
