@@ -3,28 +3,16 @@
 
 ScheduleConf::ScheduleConf()
 {
-<<<<<<< HEAD
     store = new Preferences();
-=======
-    /* */
->>>>>>> 0e523ded541637d92a181764d901524031ad1b5d
 }
 
 ScheduleConf::~ScheduleConf()
 {
-<<<<<<< HEAD
     delete store;
-=======
-    /* */
->>>>>>> 0e523ded541637d92a181764d901524031ad1b5d
 }
 
 void ScheduleConf::init()
 {
-<<<<<<< HEAD
-=======
-    store = new Preferences();
->>>>>>> 0e523ded541637d92a181764d901524031ad1b5d
     store->begin(_nameSpace.c_str(), false);
     // Check if it is the first time it runs and there is not data saved.
     if (!store->isKey(this->_zoneNames[0].c_str()))
