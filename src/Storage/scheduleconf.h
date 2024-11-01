@@ -2,14 +2,14 @@
 
 #include <Preferences.h> // this functions are to use the EEPROM
 
-#define SUNDAY 1 << 6
-#define MONDAY 1 << 5
-#define TUESDAY 1 << 4
-#define WEDNESDAY 1 << 3
-#define THURSDAY 1 << 2
-#define FRIDAY 1 << 1
-#define SATURDAY 1
-#define ALLWEEK 0x7F
+#define SUNDAY BIT6
+#define MONDAY BIT5
+#define TUESDAY BIT4
+#define WEDNESDAY BIT3
+#define THURSDAY BIT2
+#define FRIDAY BIT1
+#define SATURDAY BIT0
+#define ALLWEEK (SUNDAY|MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY)
 
 enum
 {
