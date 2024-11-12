@@ -47,7 +47,8 @@ public:
   void setTextSize(uint8_t size);
   void print(String s);
   void print(int i);
-
+  void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
+  void drawRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
 };
 
 void SSD1306Display::print(String s)
@@ -125,3 +126,14 @@ void SSD1306Display::init(uint8_t address)
     Serial.println(F("SSD1306 allocation failed"));
   }
 }
+
+void SSD1306Display::fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color)
+{
+  device.fillRect(x0, y0, w, h, color);
+}
+
+void SSD1306Display::drawRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color)
+{
+  device.drawRect(x0, y0, w, h, color);
+}
+

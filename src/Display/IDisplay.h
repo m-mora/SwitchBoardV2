@@ -35,4 +35,6 @@ public:
   virtual void setTextSize(uint8_t size);
   virtual void print(String s);
   virtual void print(int i);
+  virtual void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
+  virtual void drawRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
 };
