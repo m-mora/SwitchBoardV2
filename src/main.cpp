@@ -35,7 +35,12 @@ void setup()
 
 void loop()
 {
-  
+    for(int index = 0 ; index < MAXBUTTONS; index++)
+    {
+        button[index].update();
+        Serial.printf("Button pressed %d value %d\n",index, button[index].state());
+    }
+    delay(1000);
 }
 
 #endif
