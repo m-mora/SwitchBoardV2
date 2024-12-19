@@ -16,7 +16,7 @@ IDisplay *display;
 void setup()
 {
     Serial.begin(115200);
-    display = new ST7735Display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, TFT_RESET);
+    display = new ST7735Display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
     display->clearScreen();
     display->display();
     setup_buttons();
@@ -32,12 +32,87 @@ void loop()
 
     if (button_Up.pressed())
     {
-            display->setCursor(0,0);
-    display->setTextColor(IDISPLAY_BLUE);
-    display->setTextSize(i);
-    display->print("Text size");
-    display->print(i);
-    display->display();
+        display->setCursor(0, 0);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Up was pressed");
+        display->display();
+    }
+    else
+    {
+        display->setCursor(0, 0);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Up was released ");
+        display->display();
+    }
+
+    if (button_Down.pressed())
+    {
+        display->setCursor(0, 15);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Down was pressed");
+        display->display();
+    }
+    else
+    {
+        display->setCursor(0, 15);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Down was released ");
+        display->display();
+    }
+
+    if (button_Left.pressed())
+    {
+        display->setCursor(0, 30);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Left was pressed");
+        display->display();
+    }
+    else
+    {
+        display->setCursor(0, 30);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Left was released ");
+        display->display();
+    }
+
+    if (button_Right.pressed())
+    {
+        display->setCursor(0, 45);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Right was pressed");
+        display->display();
+    }
+    else
+    {
+        display->setCursor(0, 45);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Right was released ");
+        display->display();
+    }
+
+    if (button_Enter.pressed())
+    {
+        display->setCursor(0, 60);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Enter was pressed");
+        display->display();
+    }
+    else
+    {
+        display->setCursor(0, 60);
+        display->setTextColor(IDISPLAY_BLUE);
+        display->setTextSize(1);
+        display->print("Button Enter was released ");
+        display->display();
     }
     // for (int index = 0; index < MAXBUTTONS; index++)
     // {
