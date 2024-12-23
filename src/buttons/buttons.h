@@ -22,6 +22,17 @@
 #define DEBOUNCE_DELAY 5 // Time in miliseconds
 #endif
 
+enum
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    ENTER,
+    MAX_BUTTONS
+};
+
+// Create the instace for each button
 Bounce2::Button button_Up = Bounce2::Button();
 Bounce2::Button button_Down = Bounce2::Button();
 Bounce2::Button button_Right = Bounce2::Button();
@@ -31,6 +42,8 @@ Bounce2::Button button_Enter = Bounce2::Button();
 void setup_buttons()
 {
     // Buttons setup
+
+    // Set the pin connected to the button
     button_Up.attach(BUTTONUP, INPUT);
     button_Down.attach(BUTTONDOWN, INPUT);
     button_Right.attach(BUTTONRIGHT, INPUT);
@@ -60,72 +73,3 @@ void update_buttons()
     button_Left.update();
     button_Enter.update();
 }
-
-// class Buttons
-// {
-// private:
-//     bool currentState;
-//     uint8_t pin;
-//     String name;
-//     uint8_t lastState;
-//     uint32_t lastDeboudeTime;
-
-// public:
-//     Buttons(uint8_t pin, String n);
-//     ~Buttons();
-
-//     void init();
-//     void update();
-//     bool state();
-//     String getName();
-// };
-
-// Buttons::Buttons(uint8_t pin, String n)
-// {
-//     this->name = n;
-//     this->pin = pin;
-//     this->currentState = LOW;
-//     this->lastState = LOW;
-//     this->lastDeboudeTime = 0;
-// }
-
-// Buttons::~Buttons()
-// {
-// }
-
-// void Buttons::init()
-// {
-//     pinMode(pin, INPUT);
-// }
-
-// void Buttons::update()
-// {
-//     // this->currentState = digitalRead(pin);
-//     int valueRead = digitalRead(pin);
-
-//     // Check if the button state has changed
-//     if (valueRead != this->lastState)
-//     {
-//         this->lastDeboudeTime = millis(); // Reset the debounce timer
-//     }
-
-//     // Only update the button state if the debounce time has passed
-//     if ((millis() - this->lastDeboudeTime) > DEBOUNCE_DELAY)
-//     {
-//         // Check if the button state is stable and different from the last known state
-//         if (valueRead != this->currentState)
-//         {
-//             this->currentState = valueRead;
-//         }
-//     }
-// }
-
-// String Buttons::getName()
-// {
-//     return this->name;
-// }
-
-// bool Buttons::state()
-// {
-//     return this->currentState;
-// }

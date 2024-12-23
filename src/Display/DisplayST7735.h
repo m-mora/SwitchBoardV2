@@ -47,6 +47,8 @@ public:
   void setTextSize(uint8_t size);
   void print(String s);
   void print(int i);
+  void fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
+  void drawRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color);
 };
 
 void ST7735Display::print(String s)
@@ -110,3 +112,14 @@ void ST7735Display::init(uint8_t dummy)
   device.initR(INITR_BLACKTAB);
   device.fillScreen(ST7735_BLACK);
 }
+
+void ST7735Display::fillRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color)
+{
+  device.fillRect(x0, y0, w, h, color);
+}
+
+void ST7735Display::drawRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t color)
+{
+  device.drawRect(x0, y0, w, h, color);
+}
+
