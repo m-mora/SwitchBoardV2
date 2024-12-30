@@ -3,6 +3,7 @@
 #include "main.h"
 
 IDisplay *display;
+Keyboard kbrd;
 
 bool prev_state[MAX_BUTTONS] = {1, 1, 1, 1, 1};
 const uint8_t rowShift = 9;
@@ -55,13 +56,13 @@ void update_display_message_by_row(uint8_t row, bool state)
 
 void test_button_press()
 {
-    update_buttons();
+    kbrd.update_buttons();
 
-    update_display_message_by_row(UP, button_Up.pressed());
-    update_display_message_by_row(DOWN, button_Down.pressed());
-    update_display_message_by_row(LEFT, button_Left.pressed());
-    update_display_message_by_row(RIGHT, button_Right.pressed());
-    update_display_message_by_row(ENTER, button_Enter.pressed());
+    update_display_message_by_row(UP, kbrd.button_Up.pressed());
+    update_display_message_by_row(DOWN, kbrd.button_Down.pressed());
+    update_display_message_by_row(LEFT, kbrd.button_Left.pressed());
+    update_display_message_by_row(RIGHT, kbrd.button_Right.pressed());
+    update_display_message_by_row(ENTER, kbrd.button_Enter.pressed());
 
     delay(100);
 }
@@ -74,7 +75,6 @@ void setup()
     display->init();
     display->clearScreen();
     display->display();
-    setup_buttons();
 
     UNITY_BEGIN();
 }
