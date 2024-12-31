@@ -5,7 +5,7 @@
 #include "menu_manager.h"
 #include "../buttons/keyboard.h"
 #include <Adafruit_ST7735.h>
-//#include "../Display/IDisplay.h"
+// #include "../Display/IDisplay.h"
 
 // pins select button on encoder
 #define CS_PIN 5
@@ -15,6 +15,8 @@
 #define EN_PIN 14
 #define MOSI 23
 #define CLK 18
+
+#define MAX_ZONES 4
 
 #define ROW_HEIGHT 20
 #define DATA_COLUMN 100
@@ -42,11 +44,17 @@
 #define TITLE_TEXT 0xE71C         // light grey
 #define TITLE_BACK 0x0812         // some blue
 
+enum
+{
+    PIR_OFF,
+    PIR_ACTIVE,
+    PIR_STOP
+};
 class Menu
 {
 private:
     // must have variables for each menu item
-    // best to have these global so you can use them in processing functions
+    // all these are the IDs for each menu and menu options
     int MenuOptionAuto = 0;
     int MenuOptionOnOff = 0;
     int MenuOptionConf = 0;
@@ -60,25 +68,34 @@ private:
     int rainSensor = 0;
     int pirSensor = 0;
 
-    uint8_t days[4]{0x7F, 0x7F, 0x7F, 0x7F};
-    uint8_t hour[4] = {23, 23, 23, 23};
-    uint8_t minute[4] = {10, 20, 30, 40};
-    uint16_t duration[4] = {5, 5, 5, 5};
+    int hourConf[MAX_ZONES] = {0, 0, 0, 0};
+    int minConf[MAX_ZONES] = {0, 0, 0, 0};
+    uint16_t durConf[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneSun[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneMon[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneTue[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneWed[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneThu[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneFri[MAX_ZONES] = {0, 0, 0, 0};
+    int ZoneSat[MAX_ZONES] = {0, 0, 0, 0};
+    // End of IDs
 
-    int hourConf[4] = {0, 0, 0, 0};
-    int minConf[4] = {0, 0, 0, 0};
-    uint16_t durConf[4] = {0, 0, 0, 0};
-    int ZoneSun[4] = {0, 0, 0, 0};
-    int ZoneMon[4] = {0, 0, 0, 0};
-    int ZoneTue[4] = {0, 0, 0, 0};
-    int ZoneWed[4] = {0, 0, 0, 0};
-    int ZoneThu[4] = {0, 0, 0, 0};
-    int ZoneFri[4] = {0, 0, 0, 0};
-    int ZoneSat[4] = {0, 0, 0, 0};
+    // this is a flag to decides if enters to the menu when just boot
+    // if true, will load the menu
+    bool MenuMode = true;
 
     // create some selectable menu sub-items, these are lists inside a menu item
     const char *OffOnItems[2] = {"Off", "On"};
     const char *presenceSensor[3] = {"Off", "Active", "Stop"};
+
+    // store the values set on the menu
+    uint8_t days[MAX_ZONES]{0x7F, 0x7F, 0x7F, 0x7F};
+    uint8_t hour[MAX_ZONES] = {23, 23, 23, 23};
+    uint8_t minute[MAX_ZONES] = {10, 20, 30, 40};
+    uint16_t duration[MAX_ZONES] = {5, 5, 5, 5};
+    bool _humiditySensor = false;
+    bool _rainSensor = false;
+    uint8_t _pirSensor = 0;
 
     Adafruit_ST7735 *Display;
     Keyboard *btn;
@@ -95,12 +112,22 @@ private:
 
     EditMenu *SensorsMenu;
 
-public:
-    Menu(Adafruit_ST7735 *Display, Keyboard *btn);
-    ~Menu();
-    void MenusSetup();
     void ProcessMainMenu();
     void ProcessConfMenu();
     void ProcessZone(int zone);
     void ProcessSensors();
+
+public:
+    Menu(Adafruit_ST7735 *Display, Keyboard *btn);
+    ~Menu();
+    void MenusSetup();
+    int setZoneConf(int zone, uint8_t days, uint8_t hour, uint8_t min, uint16_t dur, bool humidity, bool rain, uint8_t pir);
+    uint8_t getZoneConfdays(int zone);
+    uint8_t getZoneConfhour(int zone);
+    uint8_t getZoneConfmin(int zone);
+    uint16_t getZoneConfduration(int zone);
+    bool getZoneConfHumidity();
+    bool getZoneConfRain();
+    uint8_t getZoneConfPir();
+    void setMenuMode(bool mode);
 };

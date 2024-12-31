@@ -2,34 +2,34 @@
 
 Menu::Menu(Adafruit_ST7735 *D, Keyboard *b)
 {
-    // Adafruit_ST7735 Display(CS_PIN, DC_PIN, MOSI, CLK, 0); // Display object
-    // Buttons btn;
+  // Adafruit_ST7735 Display(CS_PIN, DC_PIN, MOSI, CLK, 0); // Display object
+  // Buttons btn;
 
-    Display = D;
-    btn = b;
+  Display = D;
+  btn = b;
 
-    MainMenu = new ItemMenu(Display);
-    ConfigurationMenu = new ItemMenu(Display); // default is false, need not specify
+  MainMenu = new ItemMenu(Display);
+  ConfigurationMenu = new ItemMenu(Display); // default is false, need not specify
 
-    Zone1Menu = new EditMenu(Display);
-    Zone2Menu = new EditMenu(Display);
-    Zone3Menu = new EditMenu(Display);
-    Zone4Menu = new EditMenu(Display);
+  Zone1Menu = new EditMenu(Display);
+  Zone2Menu = new EditMenu(Display);
+  Zone3Menu = new EditMenu(Display);
+  Zone4Menu = new EditMenu(Display);
 
-    SensorsMenu = new EditMenu(Display);
+  SensorsMenu = new EditMenu(Display);
 }
 
 Menu::~Menu()
 {
-    delete (MainMenu);
-    delete (ConfigurationMenu);
+  delete (MainMenu);
+  delete (ConfigurationMenu);
 
-    delete (Zone1Menu);
-    delete (Zone2Menu);
-    delete (Zone3Menu);
-    delete (Zone4Menu);
+  delete (Zone1Menu);
+  delete (Zone2Menu);
+  delete (Zone3Menu);
+  delete (Zone4Menu);
 
-    delete (SensorsMenu);
+  delete (SensorsMenu);
 }
 
 void Menu::ProcessSensors()
@@ -48,9 +48,9 @@ void Menu::ProcessSensors()
   {
 
     btn->update_buttons();
-    if(btn->button_Up.pressed())
+    if (btn->button_Up.pressed())
     {
-        SensorsMenu->MoveUp();
+      SensorsMenu->MoveUp();
     }
     // Check down
     if (btn->button_Down.pressed())
@@ -59,19 +59,28 @@ void Menu::ProcessSensors()
     }
 
     // but wait...the user pressed the button on the encoder
-    if (btn->button_Enter.pressed()) {
+    if (btn->button_Enter.pressed())
+    {
       SensorMenuOption = SensorsMenu->selectRow();
     }
   }
 
   // out of menu now time for processing
 
-  // set global back color
+  // save value
+  // OFF is Zero
+  this->_rainSensor = SensorsMenu->value[rainSensor];
+  this->_humiditySensor = SensorsMenu->value[humiditySensor];
+  this->_pirSensor = SensorsMenu->value[pirSensor];
+
   Serial.println("Sensors");
 
-  Serial.print("Rain "); Serial.println(SensorsMenu->value[rainSensor]);
-  Serial.print("Humidity "); Serial.println(SensorsMenu->value[humiditySensor]);
-  Serial.print("PIR ");Serial.println(SensorsMenu->value[pirSensor]);
+  Serial.print("Rain ");
+  Serial.println((int)SensorsMenu->value[rainSensor]);
+  Serial.print("Humidity ");
+  Serial.println((int)SensorsMenu->value[humiditySensor]);
+  Serial.print("PIR ");
+  Serial.println((int)SensorsMenu->value[pirSensor]);
 }
 
 void Menu::ProcessZone(int zone)
@@ -108,9 +117,9 @@ void Menu::ProcessZone(int zone)
   {
 
     btn->update_buttons();
-    if(btn->button_Up.pressed())
+    if (btn->button_Up.pressed())
     {
-        zMenu->MoveUp();
+      zMenu->MoveUp();
     }
     // Check down
     if (btn->button_Down.pressed())
@@ -118,15 +127,15 @@ void Menu::ProcessZone(int zone)
       zMenu->MoveDown();
     }
     // but wait...the user pressed the button on the encoder
-    if (btn->button_Enter.pressed()) {
+    if (btn->button_Enter.pressed())
+    {
       ZoneMenuOption = zMenu->selectRow();
     }
   }
 
   // out of menu now time for processing
 
-  // set global back color
-  Serial.println("Configuration");
+  // save values
   uint8_t week;
   week = ((uint8_t)zMenu->value[ZoneSun[zone]] << 6 |
           (uint8_t)zMenu->value[ZoneMon[zone]] << 5 |
@@ -135,10 +144,15 @@ void Menu::ProcessZone(int zone)
           (uint8_t)zMenu->value[ZoneThu[zone]] << 2 |
           (uint8_t)zMenu->value[ZoneFri[zone]] << 1 |
           (uint8_t)zMenu->value[ZoneSat[zone]]);
-  Serial.printf("Zone %d = 0x%X\n", zone + 1, week);
-  Serial.println((int)zMenu->value[hourConf[zone]]);
-  Serial.println((int)zMenu->value[minConf[zone]]);
-  Serial.println((uint16_t)(zMenu->value[durConf[zone]] * 60));
+  this->days[zone] = week;
+
+  this->hour[zone] = (int)zMenu->value[hourConf[zone]];
+  this->minute[zone] = (int)zMenu->value[minConf[zone]];
+  this->duration[zone] = (uint16_t)(zMenu->value[durConf[zone]] * 60); // menu shows in minutes, but save it in seconds
+
+  Serial.println("Configuration");
+  Serial.printf("Zone %d = 0x%X\n", zone + 1, this->days[zone]);
+  Serial.printf("%02d:%02d - %d(%d)\n",this->hour[zone],this->minute[zone],this->duration[zone],(this->duration[zone]/60));
 }
 
 void Menu::ProcessConfMenu()
@@ -158,9 +172,9 @@ void Menu::ProcessConfMenu()
   {
 
     btn->update_buttons();
-    if(btn->button_Up.pressed())
+    if (btn->button_Up.pressed())
     {
-        ConfigurationMenu->MoveUp();
+      ConfigurationMenu->MoveUp();
     }
     // Check down
     if (btn->button_Down.pressed())
@@ -169,7 +183,8 @@ void Menu::ProcessConfMenu()
     }
 
     // but wait...the user pressed the button on the encoder
-    if (btn->button_Enter.pressed()) {
+    if (btn->button_Enter.pressed())
+    {
 
       ConfMenuOption = ConfigurationMenu->selectRow();
       if (ConfMenuOption == ConfigurationZone1)
@@ -224,9 +239,9 @@ void Menu::ProcessMainMenu()
   while (MainMenuOption != 0)
   {
     btn->update_buttons();
-    if(btn->button_Up.pressed())
+    if (btn->button_Up.pressed())
     {
-        MainMenu->MoveUp();
+      MainMenu->MoveUp();
     }
     // Check down
     if (btn->button_Down.pressed())
@@ -268,10 +283,8 @@ void Menu::ProcessMainMenu()
         Display->fillScreen(MENU_BACKGROUND);
         MainMenu->draw();
       }
-
     }
   }
-
 }
 
 void Menu::MenusSetup()
@@ -350,17 +363,17 @@ void Menu::MenusSetup()
 
   //------------------------- Zone 1 ----------------------------------------------------
   Zone1Menu->init(MENU_TEXT, MENU_BACKGROUND, MENU_HIGHLIGHTTEXT, MENU_HIGHLIGHT, MENU_SELECTTEXT, MENU_SELECT, DATA_COLUMN, ROW_HEIGHT, ROWS, "Zone 1");
-  ZoneSun[0] = Zone1Menu->addNI("Sunday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneMon[0] = Zone1Menu->addNI("Monday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneTue[0] = Zone1Menu->addNI("Tuesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneWed[0] = Zone1Menu->addNI("Wednesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneThu[0] = Zone1Menu->addNI("Thursday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneFri[0] = Zone1Menu->addNI("Friday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneSat[0] = Zone1Menu->addNI("Saturday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSun[0] = Zone1Menu->addNI("Sunday", (this->days[0] >> 6) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneMon[0] = Zone1Menu->addNI("Monday", (this->days[0] >> 5) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneTue[0] = Zone1Menu->addNI("Tuesday", (this->days[0] >> 4) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneWed[0] = Zone1Menu->addNI("Wednesday", (this->days[0] >> 3) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneThu[0] = Zone1Menu->addNI("Thursday", (this->days[0] >> 2) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneFri[0] = Zone1Menu->addNI("Friday", (this->days[0] >> 1) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSat[0] = Zone1Menu->addNI("Saturday", (this->days[0]) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
 
   hourConf[0] = Zone1Menu->addNI("Hour", hour[0], 0, 23, 1, 0, NULL);
   minConf[0] = Zone1Menu->addNI("Minute", minute[0], 0, 59, 1, 0, NULL);
-  durConf[0] = Zone1Menu->addNI("Duration", duration[0], 0, 59, 1, 0, NULL);
+  durConf[0] = Zone1Menu->addNI("Duration", duration[0] / 60, 0, 59, 1, 0, NULL); // stored in seconds, but show it in minutes
 
   Zone1Menu->setMenuBarMargins(0, Display->width(), BORDERRADIUS, BORDERTHICKNESS);
   Zone1Menu->setTitleColors(TITLE_TEXT, TITLE_BACK);
@@ -371,17 +384,17 @@ void Menu::MenusSetup()
 
   //-------------------------- Zone 2---------------------------------------------------
   Zone2Menu->init(MENU_TEXT, MENU_BACKGROUND, MENU_HIGHLIGHTTEXT, MENU_HIGHLIGHT, MENU_SELECTTEXT, MENU_SELECT, DATA_COLUMN, ROW_HEIGHT, ROWS, "Zone 2");
-  ZoneSun[1] = Zone2Menu->addNI("Sunday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneMon[1] = Zone2Menu->addNI("Monday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneTue[1] = Zone2Menu->addNI("Tuesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneWed[1] = Zone2Menu->addNI("Wednesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneThu[1] = Zone2Menu->addNI("Thursday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneFri[1] = Zone2Menu->addNI("Friday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneSat[1] = Zone2Menu->addNI("Saturday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSun[1] = Zone2Menu->addNI("Sunday", (this->days[1] >> 6) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneMon[1] = Zone2Menu->addNI("Monday", (this->days[1] >> 5) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneTue[1] = Zone2Menu->addNI("Tuesday", (this->days[1] >> 4) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneWed[1] = Zone2Menu->addNI("Wednesday", (this->days[1] >> 3) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneThu[1] = Zone2Menu->addNI("Thursday", (this->days[1] >> 2) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneFri[1] = Zone2Menu->addNI("Friday", (this->days[1] >> 1) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSat[1] = Zone2Menu->addNI("Saturday", this->days[1] & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
 
   hourConf[1] = Zone2Menu->addNI("Hour", hour[1], 0, 23, 1, 0, NULL);
   minConf[1] = Zone2Menu->addNI("Minute", minute[1], 0, 59, 1, 0, NULL);
-  durConf[1] = Zone2Menu->addNI("Duration", duration[1], 0, 59, 1, 0, NULL);
+  durConf[1] = Zone2Menu->addNI("Duration", duration[1] / 60, 0, 59, 1, 0, NULL); // stored in seconds, but show it in minutes
 
   Zone2Menu->setMenuBarMargins(0, Display->width(), BORDERRADIUS, BORDERTHICKNESS);
   Zone2Menu->setTitleColors(TITLE_TEXT, TITLE_BACK);
@@ -392,17 +405,17 @@ void Menu::MenusSetup()
 
   //-------------------------- Zone 3 ---------------------------------------------------
   Zone3Menu->init(MENU_TEXT, MENU_BACKGROUND, MENU_HIGHLIGHTTEXT, MENU_HIGHLIGHT, MENU_SELECTTEXT, MENU_SELECT, DATA_COLUMN, ROW_HEIGHT, ROWS, "Zone 3");
-  ZoneSun[2] = Zone3Menu->addNI("Sunday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneMon[2] = Zone3Menu->addNI("Monday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneTue[2] = Zone3Menu->addNI("Tuesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneWed[2] = Zone3Menu->addNI("Wednesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneThu[2] = Zone3Menu->addNI("Thursday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneFri[2] = Zone3Menu->addNI("Friday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneSat[2] = Zone3Menu->addNI("Saturday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSun[2] = Zone3Menu->addNI("Sunday", (this->days[2] >> 6) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneMon[2] = Zone3Menu->addNI("Monday", (this->days[2] >> 5) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneTue[2] = Zone3Menu->addNI("Tuesday", (this->days[2] >> 4) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneWed[2] = Zone3Menu->addNI("Wednesday", (this->days[2] >> 3) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneThu[2] = Zone3Menu->addNI("Thursday", (this->days[2] >> 2) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneFri[2] = Zone3Menu->addNI("Friday", (this->days[2] >> 1) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSat[2] = Zone3Menu->addNI("Saturday", this->days[2] & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
 
   hourConf[2] = Zone3Menu->addNI("Hour", hour[2], 0, 23, 1, 0, NULL);
   minConf[2] = Zone3Menu->addNI("Minute", minute[2], 0, 59, 1, 0, NULL);
-  durConf[2] = Zone3Menu->addNI("Duration", duration[2], 0, 59, 1, 0, NULL);
+  durConf[2] = Zone3Menu->addNI("Duration", duration[2] / 60, 0, 59, 1, 0, NULL); // stored in seconds, but show it in minutes
 
   Zone3Menu->setMenuBarMargins(0, Display->width(), BORDERRADIUS, BORDERTHICKNESS);
   Zone3Menu->setTitleColors(TITLE_TEXT, TITLE_BACK);
@@ -413,17 +426,17 @@ void Menu::MenusSetup()
 
   //-------------------------- Zone 4 ---------------------------------------------------
   Zone4Menu->init(MENU_TEXT, MENU_BACKGROUND, MENU_HIGHLIGHTTEXT, MENU_HIGHLIGHT, MENU_SELECTTEXT, MENU_SELECT, DATA_COLUMN, ROW_HEIGHT, ROWS, "Zone 4");
-  ZoneSun[3] = Zone4Menu->addNI("Sunday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneMon[3] = Zone4Menu->addNI("Monday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneTue[3] = Zone4Menu->addNI("Tuesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneWed[3] = Zone4Menu->addNI("Wednesday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneThu[3] = Zone4Menu->addNI("Thursday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneFri[3] = Zone4Menu->addNI("Friday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  ZoneSat[3] = Zone4Menu->addNI("Saturday", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSun[3] = Zone4Menu->addNI("Sunday", (this->days[3] >> 6) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneMon[3] = Zone4Menu->addNI("Monday", (this->days[3] >> 5) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneTue[3] = Zone4Menu->addNI("Tuesday", (this->days[3] >> 4) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneWed[3] = Zone4Menu->addNI("Wednesday", (this->days[3] >> 3) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneThu[3] = Zone4Menu->addNI("Thursday", (this->days[3] >> 2) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneFri[3] = Zone4Menu->addNI("Friday", (this->days[3] >> 1) & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  ZoneSat[3] = Zone4Menu->addNI("Saturday", this->days[3] & 0x1, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
 
   hourConf[3] = Zone4Menu->addNI("Hour", hour[3], 0, 23, 1, 0, NULL);
   minConf[3] = Zone4Menu->addNI("Minute", minute[3], 0, 59, 1, 0, NULL);
-  durConf[3] = Zone4Menu->addNI("Duration", duration[3], 0, 59, 1, 0, NULL);
+  durConf[3] = Zone4Menu->addNI("Duration", duration[3] / 60, 0, 59, 1, 0, NULL); // stored in seconds, but show it in minutes
 
   Zone4Menu->setMenuBarMargins(0, Display->width(), BORDERRADIUS, BORDERTHICKNESS);
   Zone4Menu->setTitleColors(TITLE_TEXT, TITLE_BACK);
@@ -434,9 +447,9 @@ void Menu::MenusSetup()
 
   //-------------------------- Sensors  ---------------------------------------------------
   SensorsMenu->init(MENU_TEXT, MENU_BACKGROUND, MENU_HIGHLIGHTTEXT, MENU_HIGHLIGHT, MENU_SELECTTEXT, MENU_SELECT, DATA_COLUMN - 20, ROW_HEIGHT, ROWS, "Sensors");
-  humiditySensor = SensorsMenu->addNI("Humidity", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  rainSensor = SensorsMenu->addNI("Rain", 0, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
-  pirSensor = SensorsMenu->addNI("Precense", 0, 0, sizeof(presenceSensor) / sizeof(presenceSensor[0]), 1, 0, presenceSensor);
+  humiditySensor = SensorsMenu->addNI("Humidity", this->_humiditySensor, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  rainSensor = SensorsMenu->addNI("Rain", this->_rainSensor, 0, sizeof(OffOnItems) / sizeof(OffOnItems[0]), 1, 0, OffOnItems);
+  pirSensor = SensorsMenu->addNI("Presence", this->_pirSensor, 0, sizeof(presenceSensor) / sizeof(presenceSensor[0]), 1, 0, presenceSensor);
 
   SensorsMenu->setMenuBarMargins(0, Display->width(), BORDERRADIUS, BORDERTHICKNESS);
   SensorsMenu->setTitleColors(TITLE_TEXT, TITLE_BACK);
@@ -451,4 +464,86 @@ void Menu::MenusSetup()
 
   // menu code done, now proceed to your code
   Display->fillScreen(MENU_TEXT); // Black
+}
+
+int Menu::setZoneConf(int zone, uint8_t days, uint8_t hour, uint8_t min, uint16_t dur, bool humidity, bool rain, uint8_t pir)
+{
+  if (zone >= MAX_ZONES)
+  {
+    // this zone does not exist
+    return 1;
+  }
+  this->days[zone] = days;
+  this->hour[zone] = hour;
+  this->minute[zone] = min;
+  this->duration[zone] = dur;
+  // the sensors as linked to the first  zone
+  this->_pirSensor = pir;
+  this->_humiditySensor = humidity;
+  this->_rainSensor = rain;
+
+  return 0;
+}
+
+uint8_t Menu::getZoneConfdays(int zone)
+{
+  if (zone >= MAX_ZONES)
+  {
+    // this zone does not exist
+    return 0xFF;
+  }
+  return this->days[zone];
+}
+
+uint8_t Menu::getZoneConfhour(int zone)
+{
+  if (zone >= MAX_ZONES)
+  {
+    // this zone does not exist
+    return 0xFF;
+  }
+  return this->hour[zone];
+}
+
+uint8_t Menu::getZoneConfmin(int zone)
+{
+  if (zone >= MAX_ZONES)
+  {
+    // this zone does not exist
+    return 0xFF;
+  }
+
+  return this->minute[zone];
+}
+
+uint16_t Menu::getZoneConfduration(int zone)
+{
+  if (zone >= MAX_ZONES)
+  {
+    // this zone does not exist
+    return 0xFF;
+  }
+
+  return this->duration[zone];
+}
+
+bool Menu::getZoneConfHumidity()
+{
+  return this->_humiditySensor;
+}
+
+uint8_t Menu::getZoneConfPir()
+{
+  return this->_pirSensor;
+}
+
+bool Menu::getZoneConfRain()
+{
+  return this->_rainSensor;
+}
+
+// if the mode is false, it does not run the menus
+void Menu::setMenuMode(bool m)
+{
+  this->MenuMode = m;
 }
