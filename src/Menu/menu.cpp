@@ -1,6 +1,6 @@
 #include "menu.h"
 
-Menu::Menu(Adafruit_ST7735 *D, Keyboard *b)
+Menu::Menu(TFT_eSPI *D, Keyboard *b)
 {
   // Adafruit_ST7735 Display(CS_PIN, DC_PIN, MOSI, CLK, 0); // Display object
   // Buttons btn;
@@ -291,8 +291,9 @@ void Menu::MenusSetup()
 {
 
   // Display->begin();
-  Display->initR(INITR_BLACKTAB);
-  Display->fillScreen(ST7735_BLACK);
+  //Display->initR(INITR_BLACKTAB);
+  Display->begin();
+  Display->fillScreen(TFT_BGR);// ST7735_BLACK);
   Display->setRotation(0);
   Display->setTextSize(1);
   /*

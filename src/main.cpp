@@ -7,7 +7,9 @@
 #define DEFAULT_DURATION 5
 #define ONE_SECOND 1000 // 1000 miliseconds
 
-Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
+//Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
+TFT_eSPI display = TFT_eSPI();
+
 Keyboard kbrd;
 ScheduleConf sch;
 // Mode menuMode;
@@ -30,7 +32,6 @@ void setup()
     }
 
     // if menu mode is true, call the menu
-    // if (menuMode.getMode())
     if (sch.getMode())
     {
         menu.MenusSetup();

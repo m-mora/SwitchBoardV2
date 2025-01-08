@@ -41,6 +41,29 @@
 #define ST7735_MENU_H
 
 #include <Adafruit_ST7735.h>
+#include <TFT_eSPI.h>
+#include <SPI.h>
+
+#undef TFT_MISO
+#undef TFT_MOSI
+#undef TFT_SCLK
+
+#undef TFT_CS  
+#undef TFT_DC  
+#undef TFT_RST 
+
+#define TFT_MISO  19  // Automatically assigned with ESP8266 if not defined
+#define TFT_MOSI  23  // Automatically assigned with ESP8266 if not defined
+#define TFT_SCLK  18  // Automatically assigned with ESP8266 if not defined
+
+#define TFT_CS    5  // Chip select control pin D8
+#define TFT_DC    19  // Data Command control pin
+#define TFT_RST  -1     // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
+
+#define CS_PIN 5
+#define DC_PIN 19
+#define MOSI 23
+#define CLK 18
 
 #define MAX_OPT_1 15				// max elements in a menu, increase as needed
 #define MAX_CHAR_LEN 30			// max chars in menus, increase as needed
@@ -61,7 +84,7 @@ class  EditMenu {
 		
 public:
 
-	EditMenu(Adafruit_ST7735 *Display,bool EnableTouch = false);
+	EditMenu(TFT_eSPI *Display,bool EnableTouch = false);
 
 	void init(uint16_t TextColor, uint16_t BackgroundColor, 
 		uint16_t HighlightTextColor, uint16_t HighlightColor,
@@ -149,24 +172,24 @@ private:
 
 	void draw565Bitmap(int16_t x, int16_t y, const uint16_t *bitmap, uint8_t w, uint8_t h);
 	
-	Adafruit_ST7735 *d;
+	TFT_eSPI *d;
 	char itemlabel[MAX_OPT_1][MAX_CHAR_LEN];
-	char ttx[MAX_CHAR_LEN];
-	char etx[MAX_CHAR_LEN]; 
-	char dtx[MAX_CHAR_LEN];
+	char title_text[MAX_CHAR_LEN];
+	char exit_text[MAX_CHAR_LEN]; 
+	char edit_text[MAX_CHAR_LEN];
 	GFXfont itemf;
 	GFXfont titlef;
-	uint16_t itc = 0, ibc = 0, ihtc = 0, ihbc = 0, istc = 0, isbc = 0;	// item variables
-	uint16_t tbl = 0, tbt = 0, tbw = 0, tbh = 0, ttc = 0, tfc = 0, tox = 0, toy = 0;	// title variables
+	uint16_t i_text_color = 0, i_background_color = 0, i_highlight_text_color = 0, i_highlight_color = 0, i_selected_text_color = 0, i_selected_color = 0;	// item variables
+	uint16_t title_bar_left = 0, title_bar_top = 0, title_bar_width = 0, title_bar_height = 0, title_text_color = 0, title_fill_color = 0, title_offset_x = 0, title_offset_y = 0;	// title variables
 	// margins
-	uint16_t imr = 0, isx = 0, itx = 0, isy = 0, irh = 0, irw = 0, ioy = 0, iox = 0, mm = 0, icox = 0, icoy = 0;
+	uint16_t i_max_row = 0, isx = 0, itx = 0, isy = 0, i_select_bar_height = 0, irw = 0, offset_text_menu_bar_y = 0, offset_text_menu_bar_x = 0, menu_margin= 0, icox = 0, icoy = 0;
 	int i = 0;
 	int totalID = 0;
 	int MaxRow = 0;
 	int currentID = 0;
-	int cr = 0;
+	int current_sel_row = 0;
 	byte debounce = 0;
-	int sr = 0, pr = 0;
+	int sr = 0, prev_sel_row= 0;
 	uint16_t col = 0;
 	float data[MAX_OPT_1] = {};
 	float low[MAX_OPT_1] = {};
@@ -181,7 +204,7 @@ private:
 	bool enablestate[MAX_OPT_1];
 	bool drawTitleFlag = true;
 	bool redraw = false;
-	uint16_t ditc = 0;
+	uint16_t disable_text_color = 0;
 	uint16_t temptColor = 0, bcolor, sbcolor;
 	const unsigned char	*itemBitmap[MAX_OPT_1];
 	const uint16_t *item565Bitmap[MAX_OPT_1];
@@ -200,7 +223,7 @@ class  ItemMenu {
 
 	
 public:
-	ItemMenu(Adafruit_ST7735 *Display, bool EnableTouch = false);
+	ItemMenu(TFT_eSPI *Display, bool EnableTouch = false);
 	
 	void init(uint16_t TextColor, uint16_t BackgroundColor,
 		uint16_t HighlightTextColor, uint16_t HighlightColor, 
@@ -268,25 +291,28 @@ private:
 
 	void draw565Bitmap(int16_t x, int16_t y, const uint16_t *Bitmap , uint8_t w, uint8_t h);
 
-	Adafruit_ST7735 *d;
+	TFT_eSPI *d;
 	//bool enabletouch;
 	char itemlabel[MAX_OPT_1][MAX_CHAR_LEN];
-	char ttx[MAX_CHAR_LEN];
-	char etx[MAX_CHAR_LEN];
-	char dtx[MAX_CHAR_LEN];
+	char title_text[MAX_CHAR_LEN];
+	char exit_text[MAX_CHAR_LEN];
+	char edit_text[MAX_CHAR_LEN];
 	GFXfont itemf;
 	GFXfont titlef;
-	uint16_t bkgr = 0, isx = 0, itx = 0, isy = 0, irh = 0, itc = 0, ibc = 0, ihbc = 0, ihtc = 0, isc = 0, imr = 0, irw = 0, ioy = 0, iox = 0;	// item variables
-	uint16_t tbl = 0, tbt = 0, tbw = 0, tbh = 0, ttc = 0, tfc = 0, tox = 0, toy = 0, icox = 0, icoy = 0, di = 0, mm = 0;	// title variables
-	uint16_t ditc = 0, difc = 0, temptColor = 0, bcolor = 0;
+	uint16_t bkgr = 0, isx = 0, itx = 0, isy = 0;
+	uint16_t i_select_bar_height = 0, i_text_color = 0, i_background_color = 0, i_highlight_color = 0, i_highlight_text_color = 0;
+	uint16_t isc = 0, i_max_row = 0, irw = 0, offset_text_menu_bar_y = 0, offset_text_menu_bar_x = 0;	// item variables
+	uint16_t title_bar_left = 0, title_bar_top = 0, title_bar_width = 0, title_bar_height = 0, title_text_color = 0, title_fill_color = 0;
+	uint16_t title_offset_x = 0, title_offset_y = 0, icox = 0, icoy = 0, di = 0, menu_margin= 0;	// title variables
+	uint16_t disable_text_color = 0, difc = 0, temptColor = 0, bcolor = 0;
 	bool hasIcon = false, moreup = false, moredown = false;
 	int i = 0;
 	int totalID = 0;
 	int MaxRow = 0;
 	int currentID = 0;
-	int cr = 0;
+	int current_sel_row = 0;
 	byte debounce = 0;
-	int sr = 0, pr = 0;
+	int sr = 0, prev_sel_row = 0;
 	const unsigned char *itemBitmap[MAX_OPT_1];
 	const uint16_t *item565Bitmap[MAX_OPT_1];
 	bool rowselected = false;

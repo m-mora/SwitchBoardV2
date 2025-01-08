@@ -97,7 +97,7 @@ private:
     bool _rainSensor = false;
     uint8_t _pirSensor = 0;
 
-    Adafruit_ST7735 *Display;
+    TFT_eSPI *Display;
     Keyboard *btn;
 
     ItemMenu *MainMenu;
@@ -118,7 +118,7 @@ private:
     void ProcessSensors();
 
 public:
-    Menu(Adafruit_ST7735 *Display, Keyboard *btn);
+    Menu(TFT_eSPI *Display, Keyboard *btn);
     ~Menu();
     void MenusSetup();
     int setZoneConf(int zone, uint8_t days, uint8_t hour, uint8_t min, uint16_t dur, bool humidity, bool rain, uint8_t pir);
