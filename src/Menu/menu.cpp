@@ -2,8 +2,6 @@
 
 Menu::Menu(TFT_eSPI *D, Keyboard *b)
 {
-  // Adafruit_ST7735 Display(CS_PIN, DC_PIN, MOSI, CLK, 0); // Display object
-  // Buttons btn;
 
   Display = D;
   btn = b;
@@ -289,7 +287,7 @@ void Menu::ProcessMainMenu()
 
 void Menu::MenusSetup()
 {
-
+  Serial.println("menu setup");
   // Display->begin();
   //Display->initR(INITR_BLACKTAB);
   Display->begin();

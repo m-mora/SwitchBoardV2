@@ -1,10 +1,13 @@
 #pragma once
 
 #include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <SPI.h>
+
 // required libraries
 #include "menu_manager.h"
 #include "../buttons/keyboard.h"
-#include <Adafruit_ST7735.h>
+//#include <Adafruit_ST7735.h>
 // #include "../Display/IDisplay.h"
 
 // pins select button on encoder
