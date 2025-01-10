@@ -9,7 +9,7 @@
 
 //Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
 TFT_eSPI display = TFT_eSPI();
-Adafruit_SSD1306 dOled(128,64,&Wire,-1);
+//Adafruit_SSD1306 dOled(128,64,&Wire,-1);
 
 Keyboard kbrd;
 ScheduleConf sch;
@@ -21,25 +21,20 @@ void setup()
 {
     Serial.begin(115200);
     ScanI2CDevicesAndDumpTable();
-    dOled.begin(SSD1306_SWITCHCAPVCC,0x3C);
-    dOled.clearDisplay();
-    //dOled.drawFastHLine(0,35,dOled.width(),SSD1306_WHITE);
-    dOled.setTextSize(1);
-    dOled.setCursor(1,30);
-    dOled.setTextColor(SSD1306_WHITE);
-    dOled.print("Initialized");
-    dOled.display();
+    // dOled.begin(SSD1306_SWITCHCAPVCC,0x3C);
+    // dOled.clearDisplay();
+
     sch.init();
     schedule_t s_val;
     for (int i = 0; i < MAX_ZONES; i++)
     {
         s_val = sch.getConf(i);
+
         if (menu.setZoneConf(i, s_val.days, s_val.hour, s_val.minute, s_val.duration, s_val.humidity, s_val.rain, s_val.pir))
         {
             Serial.println("Error loading data to the menus");
         }
     }
-    //Serial.printf("Inversion = %d\n",TFT_INVERSION_ON);
     display.fillScreen(TFT_BLACK);
     // if menu mode is true, call the menu
     if (sch.getMode())

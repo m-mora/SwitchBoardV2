@@ -433,7 +433,6 @@ void EditMenu::drawItems()
 {
 
   int bs;
-
   if (i_max_row > totalID)  // i_max_row = max rows
   {
     i_max_row = totalID;
@@ -487,7 +486,6 @@ void EditMenu::drawItems()
   {
     // menu bar start
     bs = icox + bmp_w[i + sr] + isx;
-
     // text start
     itx = bs + offset_text_menu_bar_x;
     if (enablestate[i + sr])
@@ -544,7 +542,6 @@ void EditMenu::drawItems()
     d->setTextColor(temptColor);
     d->setCursor(itx, isy - i_select_bar_height + (i_select_bar_height * i) + offset_text_menu_bar_y);
     d->print(itemlabel[i + sr]);
-
     // write new val
     d->setCursor(col, isy - i_select_bar_height + (i_select_bar_height * i) + offset_text_menu_bar_y);
     if (haslist[i + sr])

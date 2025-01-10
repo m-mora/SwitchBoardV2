@@ -150,7 +150,7 @@ void Menu::ProcessZone(int zone)
 
   Serial.println("Configuration");
   Serial.printf("Zone %d = 0x%X\n", zone + 1, this->days[zone]);
-  Serial.printf("%02d:%02d - %d(%d)\n",this->hour[zone],this->minute[zone],this->duration[zone],(this->duration[zone]/60));
+  Serial.printf("%02d:%02d - %d(%d)\n", this->hour[zone], this->minute[zone], this->duration[zone], (this->duration[zone] / 60));
 }
 
 void Menu::ProcessConfMenu()
@@ -289,9 +289,9 @@ void Menu::MenusSetup()
 {
   Serial.println("menu setup");
   // Display->begin();
-  //Display->initR(INITR_BLACKTAB);
+  // Display->initR(INITR_BLACKTAB);
   Display->begin();
-  Display->fillScreen(TFT_BGR);// ST7735_BLACK);
+  Display->fillScreen(TFT_BGR);
   Display->setRotation(0);
   Display->setTextSize(1);
   /*
@@ -477,10 +477,26 @@ int Menu::setZoneConf(int zone, uint8_t days, uint8_t hour, uint8_t min, uint16_
   this->minute[zone] = min;
   this->duration[zone] = dur;
   // the sensors as linked to the first  zone
-  this->_pirSensor = pir;
-  this->_humiditySensor = humidity;
-  this->_rainSensor = rain;
-
+  // check for bad configuration
+  this->_pirSensor = pir > 2 ? 0 : pir;
+  this->_humiditySensor = (bool)humidity;
+  this->_rainSensor = (bool)rain;
+  // if (humidity)
+  // {
+  //   this->_humiditySensor = true;
+  // }
+  // else
+  // {
+  //   this->_humiditySensor = false;
+  // }
+  // if (rain)
+  // {
+  //   this->_rainSensor = true;
+  // }
+  // else
+  // {
+  //   this->_rainSensor = false;
+  // }
   return 0;
 }
 

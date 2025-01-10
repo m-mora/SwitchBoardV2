@@ -21,7 +21,6 @@ void testDrawLineOled()
 
   for (index = 0; index < displayOled->width(); index += 4)
   {
-    Serial.printf("%d ",index);
     displayOled->drawLine(0, 0, index, displayOled->height() - 1, SSD1306_WHITE); 
     displayOled->display();
     delay(1);
