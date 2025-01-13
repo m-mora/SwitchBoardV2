@@ -13,6 +13,7 @@
 // #include "Display/DisplayST7735.h"
 #include "buttons/keyboard.h"
 #include "Menu/menu.h"
+#include "connectivity/wifiConnection.h"
 
 // Configure the pins connected to the SPI port
 #ifndef SPI_SCK

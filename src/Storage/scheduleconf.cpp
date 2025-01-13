@@ -78,9 +78,11 @@ void ScheduleConf::setMode(bool m)
     store->putBool(this->_opMode.c_str(), m);
     this->mode = m;
     store->end();
+    Serial.printf("stored %d received %d\n",this->mode,m);
 }
 
 bool ScheduleConf::getMode()
 {
+    Serial.printf("Get mode %d\n",this->mode);
     return this->mode;
 }

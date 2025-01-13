@@ -7,12 +7,13 @@
 #define DEFAULT_DURATION 5
 #define ONE_SECOND 1000 // 1000 miliseconds
 
-//Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
+// Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
 TFT_eSPI display = TFT_eSPI();
-//Adafruit_SSD1306 dOled(128,64,&Wire,-1);
+Adafruit_SSD1306 dOled(128, 64, &Wire, -1);
 
 Keyboard kbrd;
 ScheduleConf sch;
+MyWifi mWiFi;
 
 Menu menu(&display, &kbrd);
 unsigned long lastTime = 0; // to mesure one seccond
@@ -20,9 +21,12 @@ unsigned long lastTime = 0; // to mesure one seccond
 void setup()
 {
     Serial.begin(115200);
+    // WiFiInit();   // initilize wifi connection and OTA service
+    mWiFi.init();
     ScanI2CDevicesAndDumpTable();
-    // dOled.begin(SSD1306_SWITCHCAPVCC,0x3C);
-    // dOled.clearDisplay();
+    dOled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    dOled.clearDisplay();
+    mWiFi.show(&dOled);
 
     sch.init();
     schedule_t s_val;
@@ -35,35 +39,49 @@ void setup()
             Serial.println("Error loading data to the menus");
         }
     }
-    display.fillScreen(TFT_BLACK);
+    display.fillScreen(TFT_WHITE);
     // if menu mode is true, call the menu
-    if (sch.getMode())
-    {
-        menu.MenusSetup();
-        for (int i = 0; i < MAX_ZONES; i++)
-        {
-            s_val.days = menu.getZoneConfdays(i);
-            s_val.hour = menu.getZoneConfhour(i);
-            s_val.minute = menu.getZoneConfmin(i);
-            s_val.duration = menu.getZoneConfduration(i); // get it in seconds
-            s_val.humidity = menu.getZoneConfHumidity();
-            s_val.rain = menu.getZoneConfRain();
-            s_val.pir = menu.getZoneConfPir();
-            // Serial.printf("-%d - 0x%X %d %d %d %d %d %d\n", i, s_val.days, s_val.hour, s_val.minute, (s_val.duration / 60), s_val.humidity, s_val.rain, s_val.pir);
-            sch.setConf(i, &s_val);
-            s_val = sch.getConf(i);
-        }
-        sch.setMode(false);
-    }
+    // if (sch.getMode())
+    // {
+    //     menu.MenusSetup();
+    //     for (int i = 0; i < MAX_ZONES; i++)
+    //     {
+    //         s_val.days = menu.getZoneConfdays(i);
+    //         s_val.hour = menu.getZoneConfhour(i);
+    //         s_val.minute = menu.getZoneConfmin(i);
+    //         s_val.duration = menu.getZoneConfduration(i); // get it in seconds
+    //         s_val.humidity = menu.getZoneConfHumidity();
+    //         s_val.rain = menu.getZoneConfRain();
+    //         s_val.pir = menu.getZoneConfPir();
+    //         // Serial.printf("-%d - 0x%X %d %d %d %d %d %d\n", i, s_val.days, s_val.hour, s_val.minute, (s_val.duration / 60), s_val.humidity, s_val.rain, s_val.pir);
+    //         sch.setConf(i, &s_val);
+    //         s_val = sch.getConf(i);
+    //     }
+    //     sch.setMode(false);
+    // }
     // we get here either because the menu was not called or already exit from it
 }
 
+uint8_t fiveSeconds = 0;
 void loop()
 {
+    // OTAloop();
+    mWiFi.loop();
 
     /* Enter in this if every second*/
     if (millis() - lastTime >= ONE_SECOND)
     {
+        if (fiveSeconds == 5)
+        {
+            dOled.clearDisplay();
+            dOled.display();
+            fiveSeconds = 0;
+        }
+        else
+        {
+            fiveSeconds++;
+        }
+
         // come here every second
         kbrd.update_buttons();
         if (kbrd.button_Enter.pressed())
@@ -85,6 +103,7 @@ void loop()
                 sch.setConf(i, &s);
             }
         }
+        display.fillScreen(TFT_BLACK);
         lastTime = millis();
     }
 }

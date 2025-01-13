@@ -36,3 +36,6 @@
 
 # Platformio
 .pio
+
+#wifi credentials
+security.h
