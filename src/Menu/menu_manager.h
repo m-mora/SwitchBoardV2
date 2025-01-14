@@ -37,10 +37,9 @@
 
 */
 
-#ifndef ST7735_MENU_H
-#define ST7735_MENU_H
+#pragma once
 
-#include <Adafruit_ST7735.h>
+//#include <Adafruit_ST7735.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
 
@@ -329,4 +328,3 @@ uint8_t bmp_h[MAX_OPT_1] = {0};
 };
 
 
-#endif

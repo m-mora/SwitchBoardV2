@@ -2,8 +2,8 @@
 
 #include "main.h"
 
-//TFT_eSPI *display;
-Adafruit_ST7735 *display;
+TFT_eSPI *display;
+//Adafruit_ST7735 *display;
 Keyboard kbrd;
 
 bool prev_state[MAX_BUTTONS] = {1, 1, 1, 1, 1};
@@ -69,9 +69,9 @@ void test_button_press()
 void setup()
 {
     Serial.begin(115200);
-    //display = new TFT_eSPI();
-    display = new Adafruit_ST7735(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
-    display->initR();
+    display = new TFT_eSPI();
+    //display = new Adafruit_ST7735(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
+    //display->initR();
     display->fillScreen(TFT_BLACK);
 
     UNITY_BEGIN();
