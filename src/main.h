@@ -14,6 +14,7 @@
 #include "buttons/keyboard.h"
 #include "connectivity/wifiConnection.h"
 #include "time/ntp.h"
+#include "time/rtc.h"
 
 // Configure the pins connected to the SPI port
 #ifndef SPI_SCK

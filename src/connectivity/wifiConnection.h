@@ -66,10 +66,11 @@ void MyWifi::loop() { ElegantOTA.loop(); }
 void MyWifi::show(Adafruit_SSD1306* d) {
   d->clearDisplay();
   d->setTextColor(SSD1306_WHITE);
+  d->setTextSize(1);
   d->setCursor(0, 0);
   d->print("IP = ");
   d->println(WiFi.localIP());
-  d->setCursor(0, 17);
+  d->setCursor(0, 16);
   d->println("mac = ");
   d->println(WiFi.macAddress());
   d->println("Gateway:");
