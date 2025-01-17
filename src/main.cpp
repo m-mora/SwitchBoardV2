@@ -9,36 +9,46 @@
 
 // Adafruit_ST7735 display(SPI_CS, SPI_DC, SPI_MOSI, SPI_SCK, -1);
 TFT_eSPI display = TFT_eSPI();
-Adafruit_SSD1306 dOled(128, 64, &Wire, -1);
+Adafruit_SSD1306 iOled(128, 64, &Wire, -1);
 
+// instance objects
 Keyboard kbrd;
 ScheduleConf sch;
 MyWifi mWiFi;
-ntp ntpTime;
-Rtc rtc;
-
+ITime iTime;
+Reley iReley;
 Menu menu(&display, &kbrd);
+
+// global Varibles
 unsigned long lastTime = 0;
 tm currentTime; // to mesure one seccond
+uint8_t fiveSeconds = 0;
 
-void print_time_oled(tm* c);
+void mainInitialization()
+{
+    mWiFi.init();
+    ScanI2CDevicesAndDumpTable();
+    iOled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    iOled.clearDisplay();
+    iOled.display();
+    display.begin();
+    display.fillScreen(TFT_BLACK);
+    mWiFi.show(&iOled);
+    iTime.init();
+    iReley.init();
+    sch.init();
+}
 
 void setup()
 {
     Serial.begin(115200);
-    // WiFiInit();   // initilize wifi connection and OTA service
-    mWiFi.init();
-    ScanI2CDevicesAndDumpTable();
-    dOled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-    dOled.clearDisplay();
-    mWiFi.show(&dOled);
-    ntpTime.init();
-    rtc.init();
 
-    sch.init();
+    mainInitialization();
+
     schedule_t s_val;
     for (int i = 0; i < MAX_ZONES; i++)
     {
+        // if there is configuration saved, load the values in the GUI menu
         s_val = sch.getConf(i);
 
         if (menu.setZoneConf(i, s_val.days, s_val.hour, s_val.minute,
@@ -48,20 +58,11 @@ void setup()
             Serial.println("Error loading data to the menus");
         }
     }
-    display.fillScreen(TFT_BLACK);
-
-    if(ntpTime.getTime(&currentTime))
-    {
-        // NTP is working, update the RTC
-        rtc.set(currentTime.tm_sec, currentTime.tm_min, currentTime.tm_hour,currentTime.tm_mday,currentTime.tm_mon+1,currentTime.tm_year+1900);
-        rtc.printTime();
-    }
 }
 
-uint8_t fiveSeconds = 0;
 void loop()
 {
-    // OTAloop();
+    // this is required for OTA feature.
     mWiFi.loop();
 
     /* Enter in this if every second*/
@@ -69,21 +70,22 @@ void loop()
     {
         if (fiveSeconds == 5)
         {
-            dOled.clearDisplay();
-            dOled.display();
+            iOled.clearDisplay();
+            iOled.display();
             fiveSeconds = 0;
         }
         else
         {
             fiveSeconds++;
         }
-
-        // come here every second
+        // Check if a button was pressed
         kbrd.update_buttons();
+
         if (kbrd.button_Enter.pressed())
         {
+            // Enter button pressed
             Serial.println("Enter button pressed");
-            // press the enter button to call the menu
+
             menu.MenusSetup();
             schedule_t s;
             for (int i = 0; i < MAX_ZONES; i++)
@@ -98,23 +100,20 @@ void loop()
                 // save in memory
                 sch.setConf(i, &s);
             }
+            display.fillScreen(TFT_BLACK);
         }
         if (kbrd.button_Down.pressed())
         {
-            mWiFi.show(&dOled);
+            mWiFi.show(&iOled);
+            iReley.turnOn(1);
         }
         if (kbrd.button_Up.pressed())
         {
-            ntpTime.getTime(&currentTime);
-            ntpTime.print_time_oled(&dOled,&currentTime,true,false);
-            rtc.printInOled(&dOled,false);
-
+            iTime.showOled(&iOled);
+            iReley.tunrOFF(1);
         }
-        display.fillScreen(TFT_BLACK);
         lastTime = millis();
     }
 }
-
-
 
 #endif

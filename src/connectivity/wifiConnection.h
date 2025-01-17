@@ -23,23 +23,26 @@ AsyncWebServer server(80);
             const  char* password = "your_wifi_password"
 */
 
-class MyWifi {
- private:
- public:
+class MyWifi
+{
+private:
+public:
   MyWifi() {};
   ~MyWifi() {};
   void init();
   void loop();
-  void show(Adafruit_SSD1306* d);
+  void show(Adafruit_SSD1306 *d);
 };
 
-void MyWifi::init() {
+void MyWifi::init()
+{
   WiFi.mode(WIFI_STA);
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname.c_str());
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -51,11 +54,10 @@ void MyWifi::init() {
   Serial.println(WiFi.dnsIP());
   Serial.println(WiFi.macAddress());
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
-    request->send(200, "text/plain", "Hello, goto /update");
-  });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "Hello, goto /update"); });
 
-  ElegantOTA.begin(&server);  // Start ElegantOTA
+  ElegantOTA.begin(&server); // Start ElegantOTA
 
   server.begin();
   Serial.println("HTTP server started");
@@ -63,7 +65,8 @@ void MyWifi::init() {
 
 void MyWifi::loop() { ElegantOTA.loop(); }
 
-void MyWifi::show(Adafruit_SSD1306* d) {
+void MyWifi::show(Adafruit_SSD1306 *d)
+{
   d->clearDisplay();
   d->setTextColor(SSD1306_WHITE);
   d->setTextSize(1);
@@ -80,36 +83,3 @@ void MyWifi::show(Adafruit_SSD1306* d) {
   d->display();
   return;
 }
-// void WiFiInit()
-// {
-//     WiFi.mode(WIFI_STA);
-//     WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
-//     WiFi.setHostname(hostname);
-//     WiFi.begin(ssid, password);
-
-//     while (WiFi.status() != WL_CONNECTED)
-//     {
-//         delay(500);
-//         Serial.print(".");
-//     }
-//     Serial.println("");
-//     Serial.print("Connected to ");
-//     Serial.println(ssid);
-//     Serial.print("IP address: ");
-//     Serial.println(WiFi.localIP());
-//     Serial.println(WiFi.dnsIP());
-//     Serial.println(WiFi.macAddress());
-
-//     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-//               { request->send(200, "text/plain", "Hello, goto /update"); });
-
-//     ElegantOTA.begin(&server); // Start ElegantOTA
-
-//     server.begin();
-//     Serial.println("HTTP server started");
-// }
-
-// void OTAloop()
-// {
-//     ElegantOTA.loop();
-// }

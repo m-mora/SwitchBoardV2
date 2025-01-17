@@ -50,6 +50,7 @@ void Rtc::set(int sec, int min, int hour, int day, int month, int year)
 
 void Rtc::get(int *sec, int *min, int *hour, int *day, int *month, int *year)
 {
+
     now = rtc.now();
 
     *year = now.year();
@@ -98,7 +99,7 @@ void Rtc::printInOled(Adafruit_SSD1306 *d, bool clear, bool show)
     d->setCursor(35, 36);
     sprintf(buff, "%02d/%02d/%04d", now.day(), now.month(), now.year());
     d->println(buff);
-    d->setCursor(36, 46);
+    d->setCursor(40, 48);
     sprintf(buff, "%02d:%02d:%02d", now.hour(), now.minute(), now.second());
     d->println(buff);
     if (show)
@@ -109,5 +110,6 @@ void Rtc::printInOled(Adafruit_SSD1306 *d, bool clear, bool show)
 
 bool Rtc::isValid()
 {
+    this->valid = rtc.isrunning();
     return this->valid;
 }
