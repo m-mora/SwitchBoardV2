@@ -4,16 +4,14 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 
+#include "tools/i2cScan.h"
 #include "Display/DisplayConsts.h"
 #include "Storage/scheduleconf.h"
-// #include "Storage/mode.h"
-//  #include "Display/IDisplay.h"
-//  #include "Display/DisplaySSD1306.h"
-//  #include "Display/DisplayST7735.h"
 #include "Menu/menu.h"
 #include "buttons/keyboard.h"
 #include "connectivity/wifiConnection.h"
-#include "time/ntp.h"
+#include "time/itime.h"
+#include "releys/releys.h"
 
 // Configure the pins connected to the SPI port
 #ifndef SPI_SCK
@@ -47,36 +45,3 @@
 #define OLED_RESET -1  // Reset pin # (or -1 if sharing Arduino reset pin)
 #endif
 
-#include <Wire.h>
-
-void ScanI2CDevicesAndDumpTable() {
-  byte error, address;
-  int nDevices;
-  Wire.begin(21, 22);
-  Serial.println("Scanning...");
-  nDevices = 0;
-  for (address = 1; address < 127; address++) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-    if (error == 0) {
-      Serial.print("I2C device found at address 0x");
-      if (address < 16) {
-        Serial.print("0");
-      }
-      Serial.println(address, HEX);
-      nDevices++;
-    } else if (error == 4) {
-      Serial.print("Unknow error at address 0x");
-      if (address < 16) {
-        Serial.print("0");
-      }
-      Serial.println(address, HEX);
-    }
-  }
-  if (nDevices == 0) {
-    Serial.println("No I2C devices found\n");
-  } else {
-    Serial.println("done\n");
-  }
-  delay(5000);
-}
