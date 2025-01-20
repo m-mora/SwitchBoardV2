@@ -1,14 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
-#include <TFT_eSPI.h>
-#include <SPI.h>
+#include <time.h>
 
 // required libraries
 #include "menu_manager.h"
 #include "../buttons/keyboard.h"
-//#include <Adafruit_ST7735.h>
-// #include "../Display/IDisplay.h"
 
 // pins select button on encoder
 #define CS_PIN 5
@@ -18,8 +15,6 @@
 #define EN_PIN 14
 #define MOSI 23
 #define CLK 18
-
-#define MAX_ZONES 4
 
 #define ROW_HEIGHT 20
 #define DATA_COLUMN 100
@@ -53,6 +48,15 @@ enum
     PIR_ACTIVE,
     PIR_STOP
 };
+
+enum
+{
+    ZONE_1,
+    ZONE_2,
+    ZONE_3,
+    ZONE_4,
+    MAX_ZONES
+};
 class Menu
 {
 private:
@@ -67,9 +71,16 @@ private:
     int ConfigurationZone3 = 0;
     int ConfigurationZone4 = 0;
     int ConfigurationSensors = 0;
+    int ConfigurationTimeandDate = 0;
     int humiditySensor = 0;
     int rainSensor = 0;
     int pirSensor = 0;
+    uint8_t hourID = 0;
+    uint8_t minID = 0;
+    uint8_t secID = 0;
+    uint8_t dayID = 0;
+    uint8_t monthID = 0;
+    uint8_t yearID = 0;
 
     int hourConf[MAX_ZONES] = {0, 0, 0, 0};
     int minConf[MAX_ZONES] = {0, 0, 0, 0};
@@ -83,10 +94,6 @@ private:
     int ZoneSat[MAX_ZONES] = {0, 0, 0, 0};
     // End of IDs
 
-    // this is a flag to decides if enters to the menu when just boot
-    // if true, will load the menu
-    bool MenuMode = true;
-
     // create some selectable menu sub-items, these are lists inside a menu item
     const char *OffOnItems[2] = {"Off", "On"};
     const char *presenceSensor[3] = {"Off", "Active", "Stop"};
@@ -99,6 +106,9 @@ private:
     bool _humiditySensor = false;
     bool _rainSensor = false;
     uint8_t _pirSensor = 0;
+    tm timeAndDate;
+
+
 
     TFT_eSPI *Display;
     Keyboard *btn;
@@ -115,10 +125,14 @@ private:
 
     EditMenu *SensorsMenu;
 
+    EditMenu *TimeDateMenu;
+
     void ProcessMainMenu();
     void ProcessConfMenu();
     void ProcessZone(int zone);
     void ProcessSensors();
+    void ProcessTimeDate();
+    void ProcessTimeAndDate();
 
 public:
     Menu(TFT_eSPI *Display, Keyboard *btn);
@@ -132,5 +146,6 @@ public:
     bool getZoneConfHumidity();
     bool getZoneConfRain();
     uint8_t getZoneConfPir();
-    void setMenuMode(bool mode);
+    void setTime(tm t);
+    tm getTime();
 };

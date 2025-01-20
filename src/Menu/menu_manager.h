@@ -39,7 +39,6 @@
 
 #pragma once
 
-//#include <Adafruit_ST7735.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
 

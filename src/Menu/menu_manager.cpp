@@ -34,7 +34,7 @@
 
 #include <Arduino.h>
 #include "menu_manager.h"
-//#include <Adafruit_ST7735.h>
+
 #include <TFT_eSPI.h>
 #include <SPI.h>
 
@@ -433,6 +433,7 @@ void EditMenu::drawItems()
 {
 
   int bs;
+  
   if (i_max_row > totalID)  // i_max_row = max rows
   {
     i_max_row = totalID;
