@@ -39,6 +39,12 @@ void mainInitialization()
     sch.init();
 }
 
+void clearOledDisplay()
+{
+    iOled.clearDisplay();
+    iOled.display();
+}
+
 void updateTimeInMenu()
 {
     if (iTime.isValid())
@@ -65,26 +71,33 @@ void updateZoneConfiguration()
     {
         conf = sch.getConf(i);
         currConf[i] = conf;
+        Serial.printf("SAVED Zone %d: %02d:%02d\n", i + 1, currConf[i].hour, currConf[i].minute);
     }
 }
 
-void showReleyStatusInDisplay(uint8_t zone, uint8_t hour, uint8_t min, uint8_t duration)
+void showReleyStatusInDisplay(uint8_t zone, uint8_t hour, uint8_t min, uint8_t duration, bool show)
 {
-    iOled.clearDisplay();
-    iOled.setCursor(10,0);
-    iOled.setTextSize(1);
-    iOled.setTextColor(SSD1306_WHITE);
-    iOled.printf("Zone %d  is ON\n\n",zone + 1);
-    iOled.printf("Hour: %d\n",hour);
-    iOled.printf("Minute: %d\n",min);
-    iOled.printf("Duration: %d\n",duration);
-    iOled.display();
+    if (show)
+    {
+        iOled.clearDisplay();
+        iOled.setCursor(10, 0);
+        iOled.setTextSize(1);
+        iOled.setTextColor(SSD1306_WHITE);
+        iOled.printf("Zone %d is ON\n\n", zone + 1);
+        iOled.printf("Time: %02d:%02d\n", hour, min);
+        iOled.printf("Duration: %d min\n", duration / 60);
+        iOled.display();
+    }
+    else
+    {
+        clearOledDisplay();
+    }
 }
 
 void checkIfActionIsRequired()
 {
-    tm conf;
-    conf = iTime.getTimeDate();
+    tm t;
+    t = iTime.getTimeDate();
 
     for (int i = 0; i < MAX_ZONES; i++)
     {
@@ -94,27 +107,27 @@ void checkIfActionIsRequired()
             if (iReley.timeOninSeconds(i) >= currConf[i].duration)
             {
                 iReley.tunrOFF(i);
+                showReleyStatusInDisplay(i, currConf[i].hour, currConf[i].minute, currConf[i].duration, false);
                 Serial.printf("Zone %d OFF: ", i);
-                Serial.printf("%d, %d %d:%d:%d", conf.tm_wday, conf.tm_mon, conf.tm_hour, conf.tm_min, conf.tm_sec);
+                Serial.printf("%d, %d %02d:%02d:%02d", t.tm_wday, t.tm_mon, t.tm_hour, t.tm_min, t.tm_sec);
             }
         }
         else
         {
             // if true means that this day needs to turn on the correspondig zone
-            if (((6 - conf.tm_wday) & currConf[i].days) &&
-                (conf.tm_hour == currConf[i].hour) &&
-                (conf.tm_min == currConf[i].minute))
+            if (((1 << 6 - t.tm_wday) & currConf[i].days) &&  //in tm structure sunday is 0, in the conf, bit 6 is sunday
+                (t.tm_hour == currConf[i].hour) &&
+                (t.tm_min == currConf[i].minute))
             {
                 iReley.turnOn(i);
-                showReleyStatusInDisplay(i,currConf[i].hour,currConf[i].minute,currConf[i].duration);
+                showReleyStatusInDisplay(i, currConf[i].hour, currConf[i].minute, currConf[i].duration, true);
                 Serial.printf("Zone %d  ON: ", i);
                 // Serial.println(conf, "%A, %B %d %Y %H:%M:%S");
-                Serial.printf("%d, %d %d:%d:%d", conf.tm_wday, conf.tm_mon, conf.tm_hour, conf.tm_min, conf.tm_sec);
+                Serial.printf("%d, %d %02d:%02d:%02d", t.tm_wday, t.tm_mon, t.tm_hour, t.tm_min, t.tm_sec);
             }
         }
     }
 }
-
 
 void setup()
 {
@@ -139,21 +152,23 @@ void setup()
     updateTimeInMenu();
     // copy the configuratin for each zone in a local variable.
     updateZoneConfiguration();
+    delay(5000);
+    clearOledDisplay();
 }
 
 void loop()
 {
     // this is required for OTA feature.
     mWiFi.loop();
-    checkIfActionIsRequired();
 
     /* Enter in this if every second*/
     if (millis() - lastTime >= ONE_SECOND)
     {
+        checkIfActionIsRequired();
         if (fiveSeconds == 5)
         {
-            iOled.clearDisplay();
-            iOled.display();
+            // iOled.clearDisplay();
+            // iOled.display();
             fiveSeconds = 0;
         }
         else
@@ -188,8 +203,6 @@ void loop()
         }
         if (kbrd.button_Down.pressed())
         {
-            fiveSeconds = 0;
-            mWiFi.show(&iOled);
             iReley.turnOn(1);
         }
         if (kbrd.button_Up.pressed())
@@ -197,6 +210,15 @@ void loop()
             fiveSeconds = 0;
             iTime.showOled(&iOled);
             iReley.tunrOFF(1);
+        }
+        if (kbrd.button_Left.pressed())
+        {
+            clearOledDisplay();
+        }
+
+        if (kbrd.button_Right.pressed())
+        {
+            mWiFi.show(&iOled);
         }
         lastTime = millis();
     }
