@@ -106,7 +106,7 @@ void checkIfActionIsRequired()
             // The reley is on, check if needs to turn it off
             if (iReley.timeOninSeconds(i) >= currConf[i].duration)
             {
-                iReley.tunrOFF(i);
+                iReley.turnOff(i);
                 showReleyStatusInDisplay(i, currConf[i].hour, currConf[i].minute, currConf[i].duration, false);
                 Serial.printf("Zone %d OFF: ", i);
                 Serial.printf("%d, %d %02d:%02d:%02d", t.tm_wday, t.tm_mon, t.tm_hour, t.tm_min, t.tm_sec);
@@ -209,7 +209,7 @@ void loop()
         {
             fiveSeconds = 0;
             iTime.showOled(&iOled);
-            iReley.tunrOFF(1);
+            iReley.turnOff(1);
         }
         if (kbrd.button_Left.pressed())
         {

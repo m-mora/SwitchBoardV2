@@ -42,7 +42,7 @@ public:
     ~Reley();
     void init();
     bool turnOn(uint8_t reley);
-    bool tunrOFF(uint8_t reley);
+    bool turnOff(uint8_t reley);
     bool isOn(uint8_t reley);
     uint32_t timeOninSeconds(uint8_t zone);
     bool isAnyRelayOn();
@@ -110,7 +110,7 @@ bool Reley::turnOn(uint8_t reley)
     return false;
 }
 
-bool Reley::tunrOFF(uint8_t reley)
+bool Reley::turnOff(uint8_t reley)
 {
     if (reley < MAX_RELEY - 1)
     {
