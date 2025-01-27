@@ -6,6 +6,7 @@
 #define DEFAULT_MIN 40
 #define DEFAULT_DURATION 5
 #define ONE_SECOND 1000 // 1000 miliseconds
+#define MANUAL_CONTROL_ENABLE 0x8000
 
 TFT_eSPI display = TFT_eSPI();
 Adafruit_SSD1306 iOled(128, 64, &Wire, -1);
@@ -22,6 +23,7 @@ Menu menu(&display, &kbrd);
 unsigned long lastTime = 0;
 tm currentTime;
 schedule_t currConf[4];
+uint16_t manualC = 0x0000;
 uint8_t fiveSeconds = 0;
 
 void mainInitialization()
@@ -94,7 +96,7 @@ void showReleyStatusInDisplay(uint8_t zone, uint8_t hour, uint8_t min, uint8_t d
     }
 }
 
-void checkIfActionIsRequired()
+void programedControl()
 {
     tm t;
     t = iTime.getTimeDate();
@@ -115,7 +117,7 @@ void checkIfActionIsRequired()
         else
         {
             // if true means that this day needs to turn on the correspondig zone
-            if (((1 << 6 - t.tm_wday) & currConf[i].days) &&  //in tm structure sunday is 0, in the conf, bit 6 is sunday
+            if (((1 << 6 - t.tm_wday) & currConf[i].days) && // in tm structure sunday is 0, in the conf, bit 6 is sunday
                 (t.tm_hour == currConf[i].hour) &&
                 (t.tm_min == currConf[i].minute))
             {
@@ -126,6 +128,62 @@ void checkIfActionIsRequired()
                 Serial.printf("%d, %d %02d:%02d:%02d", t.tm_wday, t.tm_mon, t.tm_hour, t.tm_min, t.tm_sec);
             }
         }
+    }
+}
+
+void manualControl()
+{
+    if (manualC)
+    {
+        // an action was requested from telegram
+        switch (manualC & 0x7FFF)
+        {
+        case ZONE1ON:
+            iReley.turnOn(ZONE1);
+            break;
+        case ZONE2ON:
+            iReley.turnOn(ZONE2);
+            break;
+        case ZONE3ON:
+            iReley.turnOn(ZONE3);
+            break;
+        case ZONE4ON:
+            iReley.turnOn(ZONE4);
+            break;
+        case ZONE1OFF:
+            iReley.turnOff(ZONE1);
+            break;
+        case ZONE2OFF:
+            iReley.turnOff(ZONE2);
+            break;
+        case ZONE3OFF:
+            iReley.turnOff(ZONE3);
+            break;
+        case ZONE4OFF:
+            iReley.turnOff(ZONE4);
+            break;
+        case MSG_EXIT:
+            // ensure all zones are turned off
+            for(int i = 0; i < MAX_ZONES; i++)
+            {
+                iReley.turnOff(i);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void checkIfActionIsRequired()
+{
+    if (manualC & MANUAL_CONTROL_ENABLE)
+    {
+        manualControl();
+    }
+    else
+    {
+        programedControl();
     }
 }
 
@@ -159,7 +217,7 @@ void setup()
 void loop()
 {
     // this is required for OTA feature.
-    mWiFi.loop();
+    manualC = mWiFi.loop();
 
     /* Enter in this if every second*/
     if (millis() - lastTime >= ONE_SECOND)
