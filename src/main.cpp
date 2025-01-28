@@ -135,38 +135,49 @@ void manualControl()
 {
     if (manualC)
     {
+        uint8_t h,m,s;
+        iTime.getTime(&h,&m,&s);
         // an action was requested from telegram
         switch (manualC & 0x7FFF)
         {
         case ZONE1ON:
             iReley.turnOn(ZONE1);
+            showReleyStatusInDisplay(ZONE1, h, m, s, true);
             break;
         case ZONE2ON:
             iReley.turnOn(ZONE2);
+            showReleyStatusInDisplay(ZONE2, h, m, s, true);
             break;
         case ZONE3ON:
             iReley.turnOn(ZONE3);
+            showReleyStatusInDisplay(ZONE3, h, m, s, true);
             break;
         case ZONE4ON:
             iReley.turnOn(ZONE4);
+            showReleyStatusInDisplay(ZONE4, h, m, s, true);
             break;
         case ZONE1OFF:
             iReley.turnOff(ZONE1);
+            showReleyStatusInDisplay(ZONE1, h, m, s, false);
             break;
         case ZONE2OFF:
             iReley.turnOff(ZONE2);
+            showReleyStatusInDisplay(ZONE2, h, m, s, false);
             break;
         case ZONE3OFF:
             iReley.turnOff(ZONE3);
+            showReleyStatusInDisplay(ZONE3, h, m, s, false);
             break;
         case ZONE4OFF:
             iReley.turnOff(ZONE4);
+            showReleyStatusInDisplay(ZONE4, h, m, s, false);
             break;
         case MSG_EXIT:
             // ensure all zones are turned off
             for(int i = 0; i < MAX_ZONES; i++)
             {
                 iReley.turnOff(i);
+                showReleyStatusInDisplay(ZONE1, h, m, s, false);
             }
             break;
         default:

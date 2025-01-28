@@ -231,7 +231,7 @@ void MyWifi::_options(String chat_id)
                                [{ \"text\" : \"Turn On Zone 4\", \"callback_data\" : \"TurnOn Zone4\" }], \
                                [{ \"text\" : \"Turn Off Zone 4\", \"callback_data\" : \"TurnOff Zone4\" }], \
                                [{ \"text\" : \"Exit\", \"callback_data\" : \"Exit\" }]]";
-  bot.sendMessageWithInlineKeyboard(chat_id, "Selecciona una de las siguientes opciones\n Selecciona **Exit** sl terminar", "Markdown", keyboardJson);
+  bot.sendMessageWithInlineKeyboard(chat_id, "Selecciona una de las siguientes opciones\n Selecciona *Exit* al terminar", "Markdown", keyboardJson);
 }
 
 void MyWifi::_start(String chat_id, String from_name)
