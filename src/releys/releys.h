@@ -75,8 +75,8 @@ void Reley::init()
         this->statusOn[i] = false;
     }
     this->anyRelayIsOn = false;
-    Serial.print("GPIO0 = ");
-    Serial.println(digitalRead(RELEY_POWER));
+    // Serial.print("GPIO0 = ");
+    // Serial.println(digitalRead(RELEY_POWER));
 }
 
 Reley::~Reley()
@@ -88,7 +88,7 @@ bool Reley::turnOn(uint8_t reley)
     if (this->anyRelayIsOn)
     {
         // can not turn on a reley because there is one ON
-        // And only one must be on at the same time
+        // And only one must be On at the same time
         return false;
     }
     if (reley < MAX_RELEY - 1)
@@ -116,13 +116,11 @@ bool Reley::turnOff(uint8_t reley)
     {
         if (this->statusOn[reley])
         {
-            digitalWrite(reley_pin[reley], LOW);
-            digitalWrite(reley_pin[reley_power], LOW);
+            digitalWrite(reley_pin[reley], LOW);            // turn off the reley
+            digitalWrite(reley_pin[reley_power], LOW);      // turn off the power reley
             this->statusOn[reley] = false;
+            this->anyRelayIsOn = false;
         }
-        this->anyRelayIsOn = false;
-        Serial.print("GPIO0 = ");
-        Serial.println(digitalRead(RELEY_POWER));
 
         return true;
     }
@@ -141,7 +139,7 @@ bool Reley::isOn(uint8_t reley)
 
 uint32_t Reley::timeOninSeconds(uint8_t zone)
 {
-    return (uint32_t)(millis() - this->timeOn[zone] )/ 1000;
+    return (uint32_t)(millis() - this->timeOn[zone]) / 1000;
 }
 
 bool Reley::isAnyRelayOn()
