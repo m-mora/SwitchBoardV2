@@ -52,7 +52,7 @@ int ntp::getTime(tm *t)
 {
   if (!getLocalTime(t))
   {
-    Serial.println("fail to get the time");
+    // Serial.println("fail to get the time");
     this->valid = false;
     return 0;
   }

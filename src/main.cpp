@@ -6,6 +6,7 @@
 #define DEFAULT_MIN 40
 #define DEFAULT_DURATION 5
 #define ONE_SECOND 1000 // 1000 miliseconds
+#define FIVE_MINUTES 300 // seconds
 #define MANUAL_CONTROL_ENABLE 0x8000
 
 TFT_eSPI display = TFT_eSPI();
@@ -21,6 +22,7 @@ Menu menu(&display, &kbrd);
 
 // global Varibles
 unsigned long lastTime = 0;
+unsigned long wifiTime = 0;
 tm currentTime;
 schedule_t currConf[4];
 uint16_t manualC = 0x0000;
@@ -98,6 +100,9 @@ void showReleyStatusInDisplay(uint8_t zone, uint8_t hour, uint8_t min, uint8_t d
 
 void programedControl()
 {
+#ifdef PROFILE_TIME
+    unsigned long start_time = millis();
+#endif
     tm t;
     t = iTime.getTimeDate();
 
@@ -129,6 +134,10 @@ void programedControl()
             }
         }
     }
+#ifdef PROFILE_TIME
+    Serial.print("Programed Control: ");
+    Serial.println(millis() - start_time);
+#endif
 }
 
 void manualControl()
@@ -228,8 +237,17 @@ void setup()
 void loop()
 {
     // this is required for OTA feature.
-    manualC = mWiFi.loop();
-
+    if(mWiFi.isConnected()){
+        manualC = mWiFi.loop();
+        wifiTime = 0;
+    }
+    else{
+        // if there is not WiFi connection, try to connect every five minutes
+        if(wifiTime >= FIVE_MINUTES)
+        {
+            mWiFi.tryToReconnect();
+        }
+    }
     /* Enter in this if every second*/
     if (millis() - lastTime >= ONE_SECOND)
     {
@@ -290,6 +308,7 @@ void loop()
             mWiFi.show(&iOled);
         }
         lastTime = millis();
+        wifiTime++;
     }
 }
 

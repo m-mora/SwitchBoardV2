@@ -52,6 +52,7 @@ void ITime::init()
     }
     else if (rtc.isValid())
     {
+        Serial.println("Using RTC");
         this->valid = true;
     }
     else
@@ -76,7 +77,7 @@ tm ITime::getTimeDate()
 bool ITime::_update()
 {
     // define the priority, if the NTP is valid, let's use it
-    if (ntpTime.getTime(&currentTime))
+    if (ntpTime.isValid() && ntpTime.getTime(&currentTime))
     {
         this->hour = currentTime.tm_hour;
         this->min = currentTime.tm_min;

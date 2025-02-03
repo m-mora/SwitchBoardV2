@@ -18,6 +18,11 @@
 #define RELEY_POWER 2
 #endif
 
+#define TURN_ON_POWER LOW  // this has inverse logic
+#define TURN_OFF_POWER HIGH
+#define TURN_ON HIGH
+#define TURN_OFF LOW
+
 enum
 {
     reley1,
@@ -68,12 +73,15 @@ Reley::Reley(uint8_t r1, uint8_t r2, uint8_t r3, uint8_t r4, uint8_t rp)
 
 void Reley::init()
 {
-    for (int i = 0; i < MAX_RELEY; i++)
+    for (int i = 0; i < MAX_RELEY - 1; i++)
     {
         pinMode(reley_pin[i], OUTPUT);
-        digitalWrite(reley_pin[i], LOW);
+        digitalWrite(reley_pin[i], TURN_OFF);
         this->statusOn[i] = false;
     }
+    pinMode(reley_pin[reley_power], OUTPUT);
+    digitalWrite(reley_pin[reley_power], TURN_OFF_POWER);
+    this->statusOn[reley_power] = false;
     this->anyRelayIsOn = false;
     // Serial.print("GPIO0 = ");
     // Serial.println(digitalRead(RELEY_POWER));
@@ -96,8 +104,8 @@ bool Reley::turnOn(uint8_t reley)
         if (!this->statusOn[reley])
         {
             // turn on the source of power
-            digitalWrite(reley_pin[reley_power], HIGH);
-            digitalWrite(reley_pin[reley], HIGH);
+            digitalWrite(reley_pin[reley_power], TURN_ON_POWER);
+            digitalWrite(reley_pin[reley], TURN_ON);
             this->statusOn[reley] = true;
         }
         this->timeOn[reley] = millis();
@@ -116,8 +124,8 @@ bool Reley::turnOff(uint8_t reley)
     {
         if (this->statusOn[reley])
         {
-            digitalWrite(reley_pin[reley], LOW);            // turn off the reley
-            digitalWrite(reley_pin[reley_power], LOW);      // turn off the power reley
+            digitalWrite(reley_pin[reley], TURN_OFF);            // turn off the reley
+            digitalWrite(reley_pin[reley_power], TURN_OFF_POWER);      // turn off the power reley
             this->statusOn[reley] = false;
             this->anyRelayIsOn = false;
         }

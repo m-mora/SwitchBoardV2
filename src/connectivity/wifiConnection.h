@@ -21,6 +21,8 @@
 #define ZONE4OFF 0x0080
 #define MSG_EXIT 0x0100
 
+#define NUM_OF_RETRIES 10
+
 #include "security.h"
 String hostname = "ESP_Irrigation";
 
@@ -43,6 +45,7 @@ class MyWifi
 {
 private:
   uint16_t msgActions = 0;
+  bool _isWifiON = false;
   void _newMessage(int numNewMessages);
   void _call_query(int i, int numMessages);
   void _options(String chat_id);
@@ -54,12 +57,15 @@ public:
   ~MyWifi() {};
   void init();
   uint16_t loop();
+  bool isConnected();
   void show(Adafruit_SSD1306 *d);
   uint16_t _update_telegram();
+  void tryToReconnect();
 };
 
 void MyWifi::init()
 {
+  uint8_t retries = 0;
   WiFi.mode(WIFI_STA);
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname.c_str());
@@ -70,7 +76,14 @@ void MyWifi::init()
   {
     delay(500);
     Serial.print(".");
+    retries++;
+    if (retries == NUM_OF_RETRIES)
+    {
+      this->_isWifiON = false;
+      return;
+    }
   }
+  this->_isWifiON = true;
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
@@ -87,15 +100,31 @@ void MyWifi::init()
   server.begin();
   Serial.println("HTTP server started");
   bot.sendMessage(myTelegramID, "On Line");
-  this->_start(myTelegramID,"");
+  this->_start(myTelegramID, "");
   // bot.sendMessage(myTelegramID, "Type /start ");
 }
 
 uint16_t MyWifi::loop()
 {
+  uint8_t retries = 0;
+  while (!WiFi.isConnected())
+  {
+    WiFi.reconnect();
+    retries++;
+    if (retries == NUM_OF_RETRIES)
+    {
+      this->_isWifiON = false;
+      return 0;
+    }
+  }
   ElegantOTA.loop();
   _update_telegram();
   return this->msgActions;
+}
+
+bool MyWifi::isConnected()
+{
+  return this->_isWifiON;
 }
 
 void MyWifi::show(Adafruit_SSD1306 *d)
@@ -138,7 +167,7 @@ void MyWifi::_newMessage(int numNewMessages)
     {
       if (text == "/menu")
       {
-        this->_menu(chat_id,from_name);
+        this->_menu(chat_id, from_name);
       }
       if (text == "/options")
       {
@@ -251,4 +280,9 @@ void MyWifi::_menu(String chat_id, String from_name)
   msg += "/menu : este menu\n";
 
   bot.sendMessage(chat_id, msg, "Markdown");
+}
+
+void MyWifi::tryToReconnect()
+{
+  this->init();
 }
