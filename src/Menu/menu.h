@@ -108,8 +108,6 @@ private:
     uint8_t _pirSensor = 0;
     tm timeAndDate;
 
-
-
     TFT_eSPI *Display;
     Keyboard *btn;
 

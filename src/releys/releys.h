@@ -18,7 +18,7 @@
 #define RELEY_POWER 2
 #endif
 
-#define TURN_ON_POWER LOW  // this has inverse logic
+#define TURN_ON_POWER LOW // this has inverse logic
 #define TURN_OFF_POWER HIGH
 #define TURN_ON HIGH
 #define TURN_OFF LOW
@@ -124,8 +124,8 @@ bool Reley::turnOff(uint8_t reley)
     {
         if (this->statusOn[reley])
         {
-            digitalWrite(reley_pin[reley], TURN_OFF);            // turn off the reley
-            digitalWrite(reley_pin[reley_power], TURN_OFF_POWER);      // turn off the power reley
+            digitalWrite(reley_pin[reley], TURN_OFF);             // turn off the reley
+            digitalWrite(reley_pin[reley_power], TURN_OFF_POWER); // turn off the power reley
             this->statusOn[reley] = false;
             this->anyRelayIsOn = false;
         }

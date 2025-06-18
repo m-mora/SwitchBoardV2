@@ -42,7 +42,7 @@ void Menu::ProcessTimeAndDate()
   Display->fillScreen(MENU_BACKGROUND);
 
   TimeDateMenu->draw();
-  
+
   // run the processing loop until user move selector to title bar (which becomes exit)
   // and selectes it
   while (TimeandDateMenuOption != 0)
@@ -75,9 +75,7 @@ void Menu::ProcessTimeAndDate()
   this->timeAndDate.tm_mday = TimeDateMenu->value[dayID];
   this->timeAndDate.tm_mon = TimeDateMenu->value[monthID];
   this->timeAndDate.tm_year = TimeDateMenu->value[yearID] - 1900;
-  
 }
-
 
 void Menu::ProcessSensors()
 {

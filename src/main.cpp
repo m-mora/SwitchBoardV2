@@ -5,7 +5,7 @@
 #define DEFAULT_HOUR 23
 #define DEFAULT_MIN 40
 #define DEFAULT_DURATION 5
-#define ONE_SECOND 1000 // 1000 miliseconds
+#define ONE_SECOND 1000  // 1000 miliseconds
 #define FIVE_MINUTES 300 // seconds
 #define MANUAL_CONTROL_ENABLE 0x8000
 
@@ -144,8 +144,8 @@ void manualControl()
 {
     if (manualC)
     {
-        uint8_t h,m,s;
-        iTime.getTime(&h,&m,&s);
+        uint8_t h, m, s;
+        iTime.getTime(&h, &m, &s);
         // an action was requested from telegram
         switch (manualC & 0x7FFF)
         {
@@ -183,7 +183,7 @@ void manualControl()
             break;
         case MSG_EXIT:
             // ensure all zones are turned off
-            for(int i = 0; i < MAX_ZONES; i++)
+            for (int i = 0; i < MAX_ZONES; i++)
             {
                 iReley.turnOff(i);
                 showReleyStatusInDisplay(ZONE1, h, m, s, false);
@@ -237,13 +237,15 @@ void setup()
 void loop()
 {
     // this is required for OTA feature.
-    if(mWiFi.isConnected()){
+    if (mWiFi.isConnected())
+    {
         manualC = mWiFi.loop();
         wifiTime = 0;
     }
-    else{
+    else
+    {
         // if there is not WiFi connection, try to connect every five minutes
-        if(wifiTime >= FIVE_MINUTES)
+        if (wifiTime >= FIVE_MINUTES)
         {
             mWiFi.tryToReconnect();
         }

@@ -38,7 +38,6 @@
 #include <TFT_eSPI.h>
 #include <SPI.h>
 
-
 EditMenu::EditMenu(TFT_eSPI *Display, bool EnableTouch)
 {
   d = Display;
@@ -63,23 +62,23 @@ void EditMenu::init(uint16_t TextColor, uint16_t BackgroundColor,
 
   bcolor = TextColor;
   sbcolor = TextColor;
-  title_bar_top = 0;          // title bar top
-  title_bar_left = 0;          // title bar left
-  title_bar_height = 40;         // title bar height
+  title_bar_top = 0;            // title bar top
+  title_bar_left = 0;           // title bar left
+  title_bar_height = 40;        // title bar height
   title_bar_width = d->width(); // title bar width, default to screen width
-  title_offset_x = 0;          // x pixel offset for title text to manage centering
-  title_offset_y = 0;          // y pixel offset for title text to manage height centering
-  isx = 10;         // where to start the menu item from left, default indent 10
-  menu_margin= 5;
+  title_offset_x = 0;           // x pixel offset for title text to manage centering
+  title_offset_y = 0;           // y pixel offset for title text to manage height centering
+  isx = 10;                     // where to start the menu item from left, default indent 10
+  menu_margin = 5;
 
   isy = title_bar_top + title_bar_height + menu_margin; // where to start the menu item from top, note because array is 1 based we start drawing down a row--so back off a row, but pad 10
 
-  i_select_bar_height= ItemRowHeight; // select bar height
-  irw = title_bar_width - isx;     // select bar width, default to full width
+  i_select_bar_height = ItemRowHeight; // select bar height
+  irw = title_bar_width - isx;         // select bar width, default to full width
   col = MenuColumn;
-  i_max_row = MaxRow; // user has to indicate this
-  offset_text_menu_bar_x = 0;      // pixels to offset text in menu bar
-  offset_text_menu_bar_y = 0;      // pixels to offset text in menu bar
+  i_max_row = MaxRow;         // user has to indicate this
+  offset_text_menu_bar_x = 0; // pixels to offset text in menu bar
+  offset_text_menu_bar_y = 0; // pixels to offset text in menu bar
   // itemf = ItemFont;     // item font
   // titlef = TitleFont;     // title font
   title_text_color = TextColor;      // title text color
@@ -88,11 +87,11 @@ void EditMenu::init(uint16_t TextColor, uint16_t BackgroundColor,
   strncpy(title_text, TitleText, MAX_CHAR_LEN);
   strncpy(exit_text, EXIT_TEXT, MAX_CHAR_LEN);
   strncpy(edit_text, EDIT_TEXT, MAX_CHAR_LEN);
-  currentID = 0; // id of current highlighted or selected item (1 to ID)
-  current_sel_row = 0;        // current selected row on the screen (1 to mr-1)
-  totalID = 0;   // maximum number of items (where first position is 1)
-  sr = 0;        // draw offset for the menu array where first postion is 0
-  prev_sel_row = 1;        // previous selected rown (1 to mr - 1)
+  currentID = 0;       // id of current highlighted or selected item (1 to ID)
+  current_sel_row = 0; // current selected row on the screen (1 to mr-1)
+  totalID = 0;         // maximum number of items (where first position is 1)
+  sr = 0;              // draw offset for the menu array where first postion is 0
+  prev_sel_row = 1;    // previous selected rown (1 to mr - 1)
   rowselected = false;
   enablestate[0] = true;
   radius = 0;
@@ -228,18 +227,18 @@ void EditMenu::drawHeader(bool ShowEdit)
   {
     // draw new menu bar
     d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-    //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-    d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_NAVY);
+    // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+    d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_NAVY);
     d->setTextColor(title_text_color);
     d->print(edit_text);
     // up arrow
     d->fillTriangle(title_bar_left + 10 + 5, title_bar_top + title_bar_height - 5, // bottom left
                     title_bar_left + 10 - 5, title_bar_top + title_bar_height - 5, // bottom right
-                    title_bar_left + 10, title_bar_top + 5,            // center
+                    title_bar_left + 10, title_bar_top + 5,                        // center
                     title_text_color);
     // down arrow
-    d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,  // top left
-                    title_bar_width - 10 - 5, title_bar_top + 5,  // top right
+    d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,                // top left
+                    title_bar_width - 10 - 5, title_bar_top + 5,                // top right
                     title_bar_width - 10, title_bar_top + title_bar_height - 5, // center
                     title_text_color);
   }
@@ -250,34 +249,34 @@ void EditMenu::drawHeader(bool ShowEdit)
     {
       // draw new menu bar
       // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_NAVY);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_NAVY);
       d->setTextColor(title_text_color);
       // d->print(exit_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(exit_text,d->width()/2,title_bar_height/2); 
+      d->drawString(exit_text, d->width() / 2, title_bar_height / 2);
     }
     else
     {
       // draw new menu bar
       d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,title_fill_color,TFT_CYAN);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
-    if (totalID > i_max_row)  // max rows
+    if (totalID > i_max_row) // max rows
     {
       // up arrow
       d->fillTriangle(title_bar_left + 10 + 5, title_bar_top + title_bar_height - 5, // bottom left
                       title_bar_left + 10 - 5, title_bar_top + title_bar_height - 5, // bottom right
-                      title_bar_left + 10, title_bar_top + 5,            // center
+                      title_bar_left + 10, title_bar_top + 5,                        // center
                       title_text_color);
       // down arrow
-      d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,  // top left
-                      title_bar_width - 10 - 5, title_bar_top + 5,  // top right
+      d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,                // top left
+                      title_bar_width - 10 - 5, title_bar_top + 5,                // top right
                       title_bar_width - 10, title_bar_top + title_bar_height - 5, // center
                       title_text_color);
     }
@@ -330,9 +329,9 @@ int EditMenu::press(int16_t ScreenX, int16_t ScreenY)
 
     if (
         (ScreenX > bs) &&
-        (ScreenY > (isy + (i_select_bar_height* (i - 1)))) &&
+        (ScreenY > (isy + (i_select_bar_height * (i - 1)))) &&
         (ScreenX < (irw)) &&
-        (ScreenY < (isy + i_select_bar_height+ (i_select_bar_height* (i - 1)))))
+        (ScreenY < (isy + i_select_bar_height + (i_select_bar_height * (i - 1)))))
     {
       if (!enablestate[i + sr])
       {
@@ -433,8 +432,8 @@ void EditMenu::drawItems()
 {
 
   int bs;
-  
-  if (i_max_row > totalID)  // i_max_row = max rows
+
+  if (i_max_row > totalID) // i_max_row = max rows
   {
     i_max_row = totalID;
   }
@@ -502,13 +501,13 @@ void EditMenu::drawItems()
     {
       // scroll so blank out every row including icon since row will get scrolled
       // d->fillRect(bs, isy - i_select_bar_height+ (i_select_bar_height* i), irw - bs, i_select_bar_height , i_background_color); // back color
-      d->fillRect(icox, isy - i_select_bar_height+ (i_select_bar_height* i), irw, i_select_bar_height , i_background_color); // back color
+      d->fillRect(icox, isy - i_select_bar_height + (i_select_bar_height * i), irw, i_select_bar_height, i_background_color); // back color
     }
 
     if (i == prev_sel_row)
     {
       // maybe just row change so blank previous
-      d->fillRect(bs, isy - i_select_bar_height+ (i_select_bar_height* prev_sel_row), irw - bs, i_select_bar_height , i_background_color); // back color
+      d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * prev_sel_row), irw - bs, i_select_bar_height, i_background_color); // back color
     }
 
     if ((i == current_sel_row) && (!InputFromTouch))
@@ -516,13 +515,13 @@ void EditMenu::drawItems()
 
       if (radius > 0)
       {
-        d->fillRoundRect(bs, isy - i_select_bar_height+ (i_select_bar_height* i), irw - bs, i_select_bar_height , radius, bcolor);
-        d->fillRoundRect(bs + thick, isy - i_select_bar_height+ (i_select_bar_height* i) + thick, irw - bs - (2 * thick), i_select_bar_height- (2 * thick), radius, i_highlight_color);
+        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height, radius, bcolor);
+        d->fillRoundRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * i) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), radius, i_highlight_color);
       }
       else
       {
-        d->fillRect(bs, isy - i_select_bar_height+ (i_select_bar_height* i), irw - bs, i_select_bar_height , bcolor);
-        d->fillRect(bs + thick, isy - i_select_bar_height+ (i_select_bar_height* i) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), i_highlight_color);
+        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height, bcolor);
+        d->fillRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * i) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), i_highlight_color);
       }
 
       temptColor = i_highlight_text_color;
@@ -657,24 +656,24 @@ void EditMenu::drawRow(int ID)
     if (rowselected)
     {
       // draw new menu bar
-      //d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_CYAN);
+      // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
     else
     {
       // draw new menu bar
-      //d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,title_fill_color,TFT_CYAN);
+      // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
   }
   else
@@ -685,12 +684,12 @@ void EditMenu::drawRow(int ID)
       // non touch
       if (radius > 0)
       {
-        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , radius, sbackcolor);
+        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, radius, sbackcolor);
         d->fillRoundRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), radius, backcolor);
       }
       else
       {
-        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , sbackcolor);
+        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, sbackcolor);
         d->fillRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), backcolor);
       }
     }
@@ -703,19 +702,19 @@ void EditMenu::drawRow(int ID)
 
         if (radius > 0)
         {
-          d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , radius, sbackcolor);
+          d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, radius, sbackcolor);
           d->fillRoundRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), radius, backcolor);
         }
         else
         {
-          d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , sbackcolor);
+          d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, sbackcolor);
           d->fillRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), backcolor);
         }
       }
       else
       {
 
-        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , i_background_color); // back color
+        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, i_background_color); // back color
       }
     }
     if (!enablestate[ID])
@@ -925,7 +924,7 @@ void EditMenu::setItemTextMargins(uint16_t LeftMargin, uint16_t TopMargin, uint1
 {
   offset_text_menu_bar_x = LeftMargin; // pixels to offset text in menu bar
   offset_text_menu_bar_y = TopMargin;  // pixels to offset text in menu bar
-  menu_margin= MenuMargin;
+  menu_margin = MenuMargin;
   isy = title_bar_top + title_bar_height + menu_margin;
 }
 
@@ -1027,22 +1026,22 @@ void ItemMenu::init(uint16_t TextColor, uint16_t BackgroundColor,
   i_highlight_text_color = HighlightTextColor;
   i_highlight_color = HighlightColor;
   bcolor = TextColor;
-  title_bar_top = 0;          // title bar top
-  title_bar_left = 0;          // title bar left
-  title_bar_height = 20;         // title bar height
+  title_bar_top = 0;            // title bar top
+  title_bar_left = 0;           // title bar left
+  title_bar_height = 20;        // title bar height
   title_bar_width = d->width(); // title bar width, default to screen width
-  title_offset_x = 30;         // x pixel offset for title text to offset from left a bit
-  title_offset_y = 10;         // y pixel offset for title text to manage height offset from top
-  isx = 0;          // where to start the menu item from left, default indent 10
+  title_offset_x = 30;          // x pixel offset for title text to offset from left a bit
+  title_offset_y = 10;          // y pixel offset for title text to manage height offset from top
+  isx = 0;                      // where to start the menu item from left, default indent 10
   icox = 0;
   icoy = 0;
-  menu_margin= 5;
+  menu_margin = 5;
   isy = title_bar_top + title_bar_height + menu_margin; // where to start the menu item from top, note because array is 1 based we start drawing down a row--so back off a row, but pad 10
-  i_select_bar_height = ItemRowHeight;  // select bar height
-  irw = title_bar_width - isx;      // select bar width, default to full width
-  i_max_row = MaxRow;         // user has to indicate this
-  offset_text_menu_bar_x = 0;              // pixels to offset text in menu bar
-  offset_text_menu_bar_y = 0;              // pixels to offset text in menu bar
+  i_select_bar_height = ItemRowHeight;                  // select bar height
+  irw = title_bar_width - isx;                          // select bar width, default to full width
+  i_max_row = MaxRow;                                   // user has to indicate this
+  offset_text_menu_bar_x = 0;                           // pixels to offset text in menu bar
+  offset_text_menu_bar_y = 0;                           // pixels to offset text in menu bar
   // itemf = ItemFont;     // item font
   // titlef = TitleFont;   // menu bar font, default to item font
   title_text_color = TextColor;      // title text color
@@ -1054,10 +1053,10 @@ void ItemMenu::init(uint16_t TextColor, uint16_t BackgroundColor,
   item = 1;
   drawTitleFlag = true; // flag if we draw menu bar again
   currentID = 0;        // id of current highlighted or selected item (1 to ID)
-  current_sel_row = 0;               // current selected row on the screen (1 to mr-1)
+  current_sel_row = 0;  // current selected row on the screen (1 to mr-1)
   totalID = 0;          // maximum number of items (where first position is 1)
   sr = 0;               // draw offset for the menu array where first postion is 0
-  prev_sel_row = 1;               // previous selected rown (1 to mr - 1)
+  prev_sel_row = 1;     // previous selected rown (1 to mr - 1)
   rowselected = false;
   enablestate[0] = true;
   redraw = true;
@@ -1133,18 +1132,18 @@ void ItemMenu::drawHeader(bool ShowEdit)
   {
     // draw new menu bar
     d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-    //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-    d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_CYAN);
+    // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+    d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_CYAN);
     d->setTextColor(title_text_color);
     d->print(edit_text);
     // up arrow
     d->fillTriangle(title_bar_left + 10 + 5, title_bar_top + title_bar_height - 5, // bottom left
                     title_bar_left + 10 - 5, title_bar_top + title_bar_height - 5, // bottom right
-                    title_bar_left + 10, title_bar_top + 5,            // center
+                    title_bar_left + 10, title_bar_top + 5,                        // center
                     title_text_color);
     // down arrow
-    d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,  // top left
-                    title_bar_width - 10 - 5, title_bar_top + 5,  // top right
+    d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,                // top left
+                    title_bar_width - 10 - 5, title_bar_top + 5,                // top right
                     title_bar_width - 10, title_bar_top + title_bar_height - 5, // center
                     title_text_color);
   }
@@ -1154,35 +1153,35 @@ void ItemMenu::drawHeader(bool ShowEdit)
     if (current_sel_row == 0)
     {
       // draw new menu bar
-      //d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_NAVY);
+      // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_NAVY);
       d->setTextColor(title_text_color);
-      //d->print(exit_text);
+      // d->print(exit_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(exit_text,d->width()/2,title_bar_height/2); //title_bar_top + title_offset_y);
+      d->drawString(exit_text, d->width() / 2, title_bar_height / 2); // title_bar_top + title_offset_y);
     }
     else
     {
       // draw new menu bar
       // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,title_fill_color,TFT_CYAN);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
     if (totalID > i_max_row)
     {
       // up arrow
       d->fillTriangle(title_bar_left + 10 + 5, title_bar_top + title_bar_height - 5, // bottom left
                       title_bar_left + 10 - 5, title_bar_top + title_bar_height - 5, // bottom right
-                      title_bar_left + 10, title_bar_top + 10,            // center
+                      title_bar_left + 10, title_bar_top + 10,                       // center
                       title_text_color);
       // down arrow
-      d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,  // top left
-                      title_bar_width - 10 - 5, title_bar_top + 5,  // top right
+      d->fillTriangle(title_bar_width - 10 + 5, title_bar_top + 5,                // top left
+                      title_bar_width - 10 - 5, title_bar_top + 5,                // top right
                       title_bar_width - 10, title_bar_top + title_bar_height - 5, // center
                       title_text_color);
     }
@@ -1283,24 +1282,24 @@ void ItemMenu::drawRow(int ID, uint8_t style)
     if (style == BUTTON_PRESSED)
     {
       // draw new menu bar
-      //d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,i_highlight_color,TFT_CYAN);
+      // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, i_highlight_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
     else
     {
       // draw new menu bar
-      //d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
-      //d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
-      d->fillRectVGradient(title_bar_left,title_bar_top,title_bar_width,title_bar_height,title_fill_color,TFT_CYAN);
+      // d->setCursor(title_bar_left + title_offset_x, title_bar_top + title_offset_y);
+      // d->fillRect(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color);
+      d->fillRectVGradient(title_bar_left, title_bar_top, title_bar_width, title_bar_height, title_fill_color, TFT_CYAN);
       d->setTextColor(title_text_color);
-      //d->print(title_text);
+      // d->print(title_text);
       d->setTextDatum(MC_DATUM);
-      d->drawString(title_text,d->width()/2,title_bar_height/2); 
+      d->drawString(title_text, d->width() / 2, title_bar_height / 2);
     }
   }
   else
@@ -1311,18 +1310,18 @@ void ItemMenu::drawRow(int ID, uint8_t style)
 
       if (radius > 0)
       {
-        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , radius, bcolor);
+        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, radius, bcolor);
         d->fillRoundRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), radius, i_highlight_color);
       }
       else
       {
-        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , bcolor);
+        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, bcolor);
         d->fillRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * hr) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), i_highlight_color);
       }
     }
     else
     {
-      d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height , i_background_color); // back color
+      d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * hr), irw - bs, i_select_bar_height, i_background_color); // back color
     }
 
     // write text
@@ -1433,13 +1432,13 @@ void ItemMenu::drawItems()
 
     if (redraw)
     {
-      d->fillRect(icox, isy - i_select_bar_height + (i_select_bar_height * i), irw, i_select_bar_height , i_background_color); // back color
+      d->fillRect(icox, isy - i_select_bar_height + (i_select_bar_height * i), irw, i_select_bar_height, i_background_color); // back color
     }
 
     if (i == prev_sel_row)
     {
       // maybe just row change so blank previous
-      d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * prev_sel_row), irw - bs, i_select_bar_height , i_background_color); // back color
+      d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * prev_sel_row), irw - bs, i_select_bar_height, i_background_color); // back color
     }
 
     if ((i == current_sel_row) && (!InputFromTouch))
@@ -1447,12 +1446,12 @@ void ItemMenu::drawItems()
 
       if (radius > 0)
       {
-        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height , radius, bcolor);
+        d->fillRoundRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height, radius, bcolor);
         d->fillRoundRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * i) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), radius, i_highlight_color);
       }
       else
       {
-        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height , bcolor);
+        d->fillRect(bs, isy - i_select_bar_height + (i_select_bar_height * i), irw - bs, i_select_bar_height, bcolor);
         d->fillRect(bs + thick, isy - i_select_bar_height + (i_select_bar_height * i) + thick, irw - bs - (2 * thick), i_select_bar_height - (2 * thick), i_highlight_color);
       }
 
@@ -1599,7 +1598,7 @@ void ItemMenu::setItemTextMargins(uint16_t LeftMargin, uint16_t TopMargin, uint1
 {
   offset_text_menu_bar_x = LeftMargin; // pixels to offset text in menu bar
   offset_text_menu_bar_y = TopMargin;  // pixels to offset text in menu bar
-  menu_margin= MenuMargin;
+  menu_margin = MenuMargin;
   isy = title_bar_top + title_bar_height + menu_margin;
 }
 
