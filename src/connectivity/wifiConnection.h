@@ -156,6 +156,7 @@ void MyWifi::_newMessage(int numNewMessages)
     if (chat_id != myTelegramID)
     {
       bot.sendMessage(chat_id, "Usuario no autorizado");
+      continue;
     }
 
     // Inline buttons with callbacks when pressed will raise a callback_query message

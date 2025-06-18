@@ -22,7 +22,7 @@ public:
   void print_time_oled(Adafruit_SSD1306 *d, tm *c, bool clear = true, bool show = true);
 };
 
-void ntp::print_time_oled(Adafruit_SSD1306 *d,tm *c, bool clear, bool show)
+void ntp::print_time_oled(Adafruit_SSD1306 *d, tm *c, bool clear, bool show)
 {
   if (clear)
   {
