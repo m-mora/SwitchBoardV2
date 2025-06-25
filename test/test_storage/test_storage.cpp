@@ -35,9 +35,9 @@ void test_saved_values()
         TEST_ASSERT_EQUAL(hour[i], s.hour);
         TEST_ASSERT_EQUAL(minutes[i], s.minute);
         TEST_ASSERT_EQUAL(duration[i], s.duration);
-        TEST_ASSERT_EQUAL(humidity,s.humidity);
-        TEST_ASSERT_EQUAL(rain,s.rain);
-        TEST_ASSERT_EQUAL(pir,s.pir);
+        TEST_ASSERT_EQUAL(humidity, s.humidity);
+        TEST_ASSERT_EQUAL(rain, s.rain);
+        TEST_ASSERT_EQUAL(pir, s.pir);
     }
     return;
 }
