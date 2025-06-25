@@ -38,4 +38,4 @@
 .pio
 
 #wifi credentials
-security.h
+# security.h
