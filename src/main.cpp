@@ -110,7 +110,7 @@ void programedControl()
     {
         if (iReley.isOn(i))
         {
-            // The reley is on, check if needs to turn it off
+            // The relay is on, check if needs to turn it off
             if (iReley.timeOninSeconds(i) >= currConf[i].duration)
             {
                 iReley.turnOff(i);

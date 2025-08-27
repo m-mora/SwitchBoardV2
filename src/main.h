@@ -11,7 +11,7 @@
 #include "buttons/keyboard.h"
 #include "connectivity/wifiConnection.h"
 #include "time/itime.h"
-#include "releys/releys.h"
+#include "relays/relays.h"
 
 // Configure the pins connected to the SPI port
 #ifndef SPI_SCK

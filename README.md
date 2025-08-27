@@ -17,5 +17,5 @@ I moved to customize my own implementation
 
 - Update via OTA
 - 2 clocks sources, one RTC and one through NTP
-- 4 zones (releys)
+- 4 zones (relays)
 
