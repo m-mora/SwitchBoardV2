@@ -10,12 +10,13 @@ I moved to customize my own implementation
 
 - ElegantOTA
 - Bounce2
-- The menus asre a hack based on a project developed by Kris Kasprzak [here](https://github.com/KrisKasprzak/ILI9341_t3_Menu)
+- The menus is a hack based on a project developed by Kris Kasprzak [here](https://github.com/KrisKasprzak/ILI9341_t3_Menu)
 - Preferences (To store in the ESP memory)
 
 ### Features
 
 - Update via OTA
 - 2 clocks sources, one RTC and one through NTP
-- 4 zones (releys)
+- 4 zones (relays)
+- 1 relay that can be used to switch on/off the source voltage to be distribute in the other relays
 
